@@ -27,6 +27,8 @@
                (/ (- ,run2 ,run1) internal-time-units-per-second)))))
 
 (defun compute-stats (nums)
+  "Computes statistical values from the list of numbers:
+TOTAL MAX MIN MEDIAN AVERAGE STANDARD-DEVIATION"
   (let* ((count (length nums))
          (total (apply #'+ nums))
          (average (/ total count))
@@ -38,6 +40,7 @@
     (list total max min median average deviation)))
 
 (defun print-table (table &key (stream T) (padding 2))
+  "Prints a table with proper spacing."
   (let ((widths (apply #'map 'list #'max (loop for row in table
                                                collect (loop for field in row
                                                              collect (+ padding (length (princ-to-string field))))))))
@@ -79,3 +82,7 @@
          collect real into reals
          collect run into runs
          finally (format-stats T :REAL-TIME reals :RUN-TIME runs)))
+
+(setf (documentation 'with-timing 'function)
+      "Executes the body ITERATIONS times, collecting statistical data in the process.
+After completion prints a table of the collection information and returns NIL.")

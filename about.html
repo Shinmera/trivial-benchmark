@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8"/>
+    <title>TRIVIAL-BENCHMARK</title>
+    <style type="text/css">
+      code a{text-decoration:none;}
+      h1{display:inline-block;font-size: 28pt;margin-bottom:0;}
+      code{font-family: Consolas, Inconsolata, monospace;}
+      h4{display: inline-block;margin:0;padding:0;}
+      ul{list-style: none;}
+      .package li{margin-bottom: 20px;}
+      .package pre{margin: 0 0 0 10px; white-space: pre-wrap;}
+      .package .nicknames{font-size: 12pt; font-weight: normal;}
+      table{margin: 20px;}
+      td{padding-bottom: 10px;}
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>trivial-benchmark</h1>
+      <span>1.0.0</span>
+      <p>Some simple benchmarking helper functions</p>
+    </header>
+    <div id="content">
+      <article>
+        <documentate>
+          <span><h2>About Trivial-Benchmark</h2>
+
+<p>Frequently I want to do a quick benchmark comparison of my functions. <code><a href="http://l1sp.org/cl/TIME">TIME</a></code> is nice to get some data, but it's limited to a single run so there isn't really much of a statistical value in it. Trivial-benchmark runs a block of code many times and outputs some statistical data for it. On SBCL this includes the data from <code><a href="http://l1sp.org/cl/TIME">TIME</a></code>, for all other implementations just the REAL- and RUN-TIME data.</p>
+
+<h2>How To</h2>
+
+<pre><code>(<a href="#TRIVIAL-BENCHMARK:WITH-TIMING">benchmark:with-timing</a> 1000
+  (something-to-test))</code></pre>
+
+<p>Sample:</p>
+
+<p><img src="http://shinmera.tymoon.eu/public/plump-benchmark.png" alt="Output Screenshot"/></p>
+</span>
+        </documentate>
+      </article>
+      <article>
+        <h2>Copyright</h2>
+        <span>trivial-benchmark</span> is licensed under the <span><a href="https://tldrlegal.com/search?q=Artistic">Artistic</a></span> license and ©<span>2014</span> <span>Nicolas Hafner &lt;shinmera@tymoon.eu&gt;</span>. 
+      </article>
+      <article>
+        <h2>Package Index</h2>
+        <ul><li class="package">
+            <h3>
+              <a name="TRIVIAL-BENCHMARK" href="#TRIVIAL-BENCHMARK">TRIVIAL-BENCHMARK</a>
+              <span class="nicknames">(BENCHMARK ORG.TYMOONNEXT.TRIVIAL-BENCHMARK)</span>
+            </h3>
+            <ul><li>
+                <a name="TRIVIAL-BENCHMARK:COMPUTE-STATS"/>
+                <article>
+                  <header>
+                    <span>FUNCTION</span>
+                    <code>
+                      <h4><a href="#TRIVIAL-BENCHMARK:COMPUTE-STATS">COMPUTE-STATS</a></h4>
+                      <span></span>
+                      <span>(NUMS)</span>
+                    </code>
+                  </header>
+                  <pre>Computes statistical values from the list of numbers:
+TOTAL MAX MIN MEDIAN AVERAGE STANDARD-DEVIATION</pre>
+                </article>
+              </li><li>
+                <a name="TRIVIAL-BENCHMARK:TIME-SPENT"/>
+                <article>
+                  <header>
+                    <span>MACRO</span>
+                    <code>
+                      <h4><a href="#TRIVIAL-BENCHMARK:TIME-SPENT">TIME-SPENT</a></h4>
+                      <span></span>
+                      <span>(&amp;BODY BODY)</span>
+                    </code>
+                  </header>
+                  <pre>Returns three values: the return of the last body form, the real time passed and the run time passed.</pre>
+                </article>
+              </li><li>
+                <a name="TRIVIAL-BENCHMARK:WITH-TIMING"/>
+                <article>
+                  <header>
+                    <span>MACRO</span>
+                    <code>
+                      <h4><a href="#TRIVIAL-BENCHMARK:WITH-TIMING">WITH-TIMING</a></h4>
+                      <span></span>
+                      <span>(ITERATIONS &amp;BODY BODY)</span>
+                    </code>
+                  </header>
+                  <pre>Executes the body ITERATIONS times, collecting statistical data in the process.
+After completion prints a table of the collection information and returns NIL.</pre>
+                </article>
+              </li></ul></li></ul></article></div></body></html>
