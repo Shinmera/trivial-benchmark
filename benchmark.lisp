@@ -92,11 +92,11 @@ TOTAL MAX MIN MEDIAN AVERAGE STANDARD-DEVIATION"
 
 #-sbcl
 (defun call-with-timing (iterations function)
-  `(loop for i from 1 upto iterations
-         for (result real run) = (multiple-value-list (time-spent (funcall function)))
-         collect real into reals
-         collect run into runs
-         finally (format-stats T :REAL-TIME reals :RUN-TIME runs)))
+  (loop for i from 1 upto iterations
+        for (result real run) = (multiple-value-list (time-spent (funcall function)))
+        collect real into reals
+        collect run into runs
+        finally (format-stats T :REAL-TIME reals :RUN-TIME runs)))
 
 (defmacro with-timing (iterations &body body)
   "Executes the body ITERATIONS times, collecting statistical data in the process.
