@@ -53,6 +53,7 @@
    #:with-timing)
   ;; toolkit.lisp
   (:export
+   #:type=
    #:print-table
    #:round-to))
 

@@ -10,11 +10,11 @@
 
 (defsystem trivial-benchmark
   :name "Trivial-Benchmark"
-  :version "1.0.0"
+  :version "2.0.0"
   :license "Artistic"
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
-  :description "Some simple benchmarking helper functions"
+  :description "An easy to use benchmarking system."
   :serial T
   :components ((:file "package")
                (:file "toolkit")
