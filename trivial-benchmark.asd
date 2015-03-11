@@ -16,4 +16,7 @@
   :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
   :description "Some simple benchmarking helper functions"
   :serial T
-  :components ((:file "benchmark")))
+  :components ((:file "package")
+               (:file "toolkit")
+               (:file "timer")
+               (:file "samples")))
