@@ -237,7 +237,7 @@ See COMMIT"
          (unless ,errord
            (commit ,timer))))))
 
-(defmacro with-timing ((n &optional (timer-form '(make-timer)) (stream T) (computations '*default-computations)) &body forms)
+(defmacro with-timing ((n &optional (timer-form '(make-timer)) (stream T) (computations '*default-computations*)) &body forms)
   "Evaluates FORMS N times, using WITH-SAMPLING on the value of TIMER-FORM each iteration.
 At the end, runs REPORT on the timer with STREAM and COMPUTATIONS.
 
