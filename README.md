@@ -25,8 +25,8 @@ However, you can also do more complex timing using `make-timer` and `with-sampli
     
     (benchmark:report *timer*)
 
-Sample Output:
-![Output Screenshot](http://shinmera.tymoon.eu/public/plump-benchmark.png)
+Sample Output:  
+![Output Screenshot](https://filebox.tymoon.eu/file/TkRVdw==)
 
 Extending Trivial-Benchmark
 ---------------------------
