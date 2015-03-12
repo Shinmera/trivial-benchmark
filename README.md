@@ -32,7 +32,7 @@ Extending Trivial-Benchmark
 ---------------------------
 If you're interested in adding additional metrics, you'll want to take a look at the `metric` class, as well as the related methods, `start` `discard` `commit` `take-sample` `samples` `sample-size` `condense` `reduce-samples` `compute` `report` `reset`. For a basic `metric`, you only need to implement `start`, `discard`, `commit`, `samples`, and `take-sample`. The other functions have standard methods that will do their computations based on those five.
 
-If you have a function that returns a current state of your sample and simply want to have the metric show the delta between `start` and `commit`, you can use `define-delta-sample`.
+If you have a function that returns a current state of your sample and simply want to have the metric show the delta between `start` and `commit`, you can use `define-delta-metric`.
 
     (define-delta-metric run-time
       (/ (get-internal-run-time)
