@@ -30,13 +30,12 @@ Sample Output:
 
 Extending Trivial-Benchmark
 ---------------------------
-If you're interested in adding additional metrics, you'll want to take a look at the `metric` class, as well as the related methods, `start` `discard` `commit` `take-sample` `samples` `sample-size` `condense` `reduce-samples` `compute` `report` `reset`. For a basic `metric`, you only need to implement `start`, `discard`, `commit`, `samples`, and `take-sample`. The other functions have standard methods that will do their computations based on those five.
+If you're interested in adding additional metrics, you'll want to take a look at the `metric` class, as well as the related methods, `start` `stop` `discard` `commit` `take-sample` `samples` `sample-size` `condense` `reduce-samples` `compute` `report` `reset`. For a basic `metric`, you only need to implement `start`, `stop`, `commit`, `samples`, and `take-sample`. The other functions have standard methods that will do their computations based on those five.
 
-If you have a function that returns a current state of your sample and simply want to have the metric show the delta between `start` and `commit`, you can use `define-delta-metric`.
+If you have a function that returns a current state of your sample and simply want to have the metric show the delta between `start` and `stop`, you can use `define-delta-metric`.
 
-    (define-delta-metric run-time
-      (/ (get-internal-run-time)
-         internal-time-units-per-second))
+    (define-delta-metric (run-time internal-time-units-per-second)
+      (get-internal-run-time))
 
 You can also implement a new computation type that is used to display the different metrics in the table. For that, simply write a method on `compute` with the name of your computation as an eql-specializer and then push the name onto `*default-computations*` so that it's always displayed when using `report`. As an example, the maximum is simply calculated as follows:
 

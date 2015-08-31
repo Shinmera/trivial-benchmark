@@ -11,7 +11,7 @@
   "The list of class-names used to populate a TIMER by default.")
 
 (defvar *default-computations*
-  '(:count :total :minimum :maximum :median :average :deviation)
+  '(:samples :total :minimum :maximum :median :average :deviation)
   "The list of computation-names used to print the REPORT table.")
 
 (defclass metric ()
@@ -22,8 +22,7 @@
   (:documentation "Returns T if the metric is currently sampling.
 
 See START
-See DISCARD
-See COMMIT"))
+See STOP"))
 
 (defmethod print-object ((metric metric) stream)
   (print-unreadable-object (metric stream :type T)
@@ -37,21 +36,27 @@ Sets RUNNING to T.")
       (call-next-method)
       (setf (running metric) T))))
 
-(defgeneric discard (metric)
-  (:documentation "Stop and discard the current sample of METRIC. 
+(defgeneric stop (metric)
+  (:documentation "Stop the sample for METRIC.
 Sets RUNNING to NIL.")
   (:method :around ((metric metric))
     (when (running metric)
       (call-next-method)
-      (setf (running metric) NIL))))
+      (setf (running metric) NIL)))
+  (:method ((metric metric))
+    NIL))
+
+(defgeneric discard (metric)
+  (:documentation "Discard the current sample of METRIC.
+If the metric is running, call STOP first.")
+  (:method :before ((metric metric))
+    (when (running metric) (stop metric))))
 
 (defgeneric commit (metric)
-  (:documentation "Stop and commit the current sample of METRIC. 
-Sets RUNNING to NIL.")
-  (:method :around ((metric metric))
-    (when (running metric)
-      (call-next-method)
-      (setf (running metric) NIL))))
+  (:documentation "Commit the current sample of METRIC.
+If the metric is running, call STOP first.")
+  (:method :before ((metric metric))
+    (when (running metric) (stop metric))))
 
 (defgeneric take-sample (metric)
   (:documentation "Return a current sampling value for METRIC.
@@ -82,26 +87,40 @@ cannot provide a sample value at any point in time."))
   (:documentation "Compute a value of the statistical computation THING for METRIC based on its current samples.")
   (:method ((x (eql :count)) (metric metric))
     (sample-size metric))
+  (:method ((x (eql :samples)) (metric metric))
+    (sample-size metric))
   (:method ((x (eql :total)) (metric metric))
-    (reduce-samples metric #'+))
+    (if (= 0 (sample-size metric))
+        :n/a
+        (reduce-samples metric #'+)))
   (:method ((x (eql :minimum)) (metric metric))
-    (reduce-samples metric #'min))
+    (if (= 0 (sample-size metric))
+        :n/a
+        (reduce-samples metric #'min)))
   (:method ((x (eql :maximum)) (metric metric))
-    (reduce-samples metric #'max))
+    (if (= 0 (sample-size metric))
+        :n/a
+        (reduce-samples metric #'max)))
   (:method ((x (eql :median)) (metric metric))
-    (elt (sort (copy-seq (samples metric)) #'<)
-         (1- (ceiling (/ (compute :count metric) 2)))))
+    (if (= 0 (sample-size metric))
+        :n/a
+        (elt (sort (copy-seq (samples metric)) #'<)
+             (1- (ceiling (/ (compute :samples metric) 2))))))
   (:method ((x (eql :average)) (metric metric))
-    (/ (compute :total metric)
-       (compute :count metric)))
+    (if (= 0 (sample-size metric))
+        :n/a
+        (/ (compute :total metric)
+           (compute :samples metric))))
   (:method ((x (eql :deviation)) (metric metric))
-    (let ((metrics (samples metric))
-          (average (compute :average metric)))
-      (sqrt
-       (/ (reduce #'+ (map (type-of metrics)
-                           (lambda (a) (expt (- a average) 2))
-                           metrics))
-          (compute :count metric)))))
+    (if (= 0 (sample-size metric))
+        :n/a
+        (let ((metrics (samples metric))
+              (average (compute :average metric)))
+          (sqrt
+           (/ (reduce #'+ (map (type-of metrics)
+                               (lambda (a) (expt (- a average) 2))
+                               metrics))
+              (compute :samples metric))))))
   (:method ((computations list) (metric metric))
     (mapcar (lambda (thing) (compute thing metric)) computations)))
 
@@ -167,6 +186,7 @@ The metric is replaced if it is found in the timer by TYPE= comparison.")
                collect (list* (type-of metric)
                               (mapcar (lambda (a)
                                         (typecase a
+                                          (symbol (format NIL "~a" a))
                                           (fixnum (format NIL "~d" a))
                                           (T (format NIL "~f" (round-to a 6)))))
                                       (compute computations metric)))))
@@ -190,14 +210,18 @@ The metric is replaced if it is found in the timer by TYPE= comparison.")
 (defmacro do-metrics ((metric-var timer &optional result-form) &body forms)
   "Binds METRIC-VAR to each metric of TIMER and then evaluates FORMS. 
 Returns the value of RESULT-FORM after the loop."
-  `(progn (map-metrics ,timer (lambda (,metric-var) ,@forms))
-          ,result-form))
+  `(block NIL
+     (map-metrics ,timer (lambda (,metric-var) ,@forms))
+     ,result-form))
 
 (defmethod take-sample ((timer timer))
   (map-metrics timer #'take-sample))
 
 (defmethod start ((timer timer))
   (map-metrics timer #'start))
+
+(defmethod stop ((timer timer))
+  (map-metrics timer #'stop))
 
 (defmethod discard ((timer timer))
   (map-metrics timer #'discard))
@@ -231,11 +255,13 @@ See COMMIT"
        (unwind-protect
             (handler-bind ((error (lambda (err)
                                     (declare (ignore err))
-                                    (setf ,errord T)
-                                    (discard ,timer))))
+                                    (setf ,errord T))))
               ,@forms)
          (unless ,errord
-           (commit ,timer))))))
+           (stop ,timer)
+           (if ,errord
+               (discard ,timer)
+               (commit ,timer)))))))
 
 (defmacro with-timing ((n &optional (timer-form '(make-timer)) (stream T) (computations '*default-computations*)) &body forms)
   "Evaluates FORMS N times, using WITH-SAMPLING on the value of TIMER-FORM each iteration.

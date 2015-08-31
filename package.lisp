@@ -10,7 +10,7 @@
   (:nicknames #:org.shirakumo.trivial-benchmark #:benchmark)
   ;; samples.lisp
   (:export
-   #:listed-metric
+   #:vector-metric
    #:delta-metric
    #:starting-value
    #:define-delta-metric
