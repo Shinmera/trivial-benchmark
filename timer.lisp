@@ -117,7 +117,7 @@ cannot provide a sample value at any point in time."))
         (let ((metrics (samples metric))
               (average (compute :average metric)))
           (sqrt
-           (/ (reduce #'+ (map (type-of metrics)
+           (/ (reduce #'+ (map (class-of metrics)
                                (lambda (a) (expt (- a average) 2))
                                metrics))
               (compute :samples metric))))))
