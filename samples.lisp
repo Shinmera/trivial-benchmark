@@ -130,3 +130,9 @@ See DELTA-METRIC"
                    (cpu-cycles-h1 metric) (cpu-cycles-l1 metric))))
       (when (<= 0 cycles)
         (vector-push-extend cycles (samples metric))))))
+
+#+ecl
+(progn
+  (define-delta-metric (bytes-consed)
+    "Samples GC_get_total_bytes."
+    (ffi:c-inline () () :object "ecl_make_unsigned_integer(GC_get_total_bytes())" :one-liner t)))
