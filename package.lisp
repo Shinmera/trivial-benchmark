@@ -55,5 +55,12 @@
   (:export
    #:type=
    #:print-table
-   #:round-to))
+   #:round-to)
+  ;; suite.lisp
+  (:export
+   #:find-benchmark-package
+   #:define-benchmark-package
+   #:define-benchmark
+   #:with-benchmark-sampling
+   #:run-package-benchmarks))
 

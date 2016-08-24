@@ -15,8 +15,10 @@
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
   :description "An easy to use benchmarking system."
+  :depends-on (#:alexandria)
   :serial T
   :components ((:file "package")
                (:file "toolkit")
                (:file "timer")
-               (:file "samples")))
+               (:file "samples")
+               (:file "suite")))
