@@ -20,17 +20,17 @@
   <body>
     <header>
       <h1>trivial-benchmark</h1>
-      <span>2.0.0</span>
-      <p>An easy to use benchmarking system.</p>
+      <span class="version">2.0.0</span>
+      <p class="description">An easy to use benchmarking system.</p>
     </header>
     <div id="content">
       <article>
-        <c:documentate>
+        
           <span><h2>About Trivial-Benchmark</h2>
 
-<p>Frequently I want to do a quick benchmark comparison of my functions. <code><a href="http://l1sp.org/cl/time">TIME</a></code> is nice to get some data, but it's limited to a single run so there isn't really much of a statistical value in it. Trivial-benchmark runs a block of code many times and outputs some statistical data for it. On SBCL this includes the data from <code><a href="http://l1sp.org/cl/time">TIME</a></code>, for all other implementations just the REAL- and RUN-TIME data. However, you can extend the system by adding your own <code><a href="#TRIVIAL-BENCHMARK:METRIC">metric</a></code>s to it, or even by adding additional statistical <code><a href="#TRIVIAL-BENCHMARK:COMPUTE">compute</a></code>ations. </p>
+<p>Frequently I want to do a quick benchmark comparison of my functions. <code><a href="http://l1sp.org/cl/time">TIME</a></code> is nice to get some data, but it's limited to a single run so there isn't really much of a statistical value in it. Trivial-Benchmark runs a block of code many times and outputs some statistical data for it. On SBCL this includes the data from <code><a href="http://l1sp.org/cl/time">TIME</a></code>, for all other implementations just the REAL- and RUN-TIME data. However, you can extend the system by adding your own <code><a href="#TRIVIAL-BENCHMARK:METRIC">metric</a></code>s to it, or even by adding additional statistical <code><a href="#TRIVIAL-BENCHMARK:COMPUTE">compute</a></code>ations. </p>
 
-<h2>How To</h2>
+<h2>Measurement How-To</h2>
 
 <p>For basic throwaway benchmarking, the <code><a href="#TRIVIAL-BENCHMARK:WITH-TIMING">with-timing</a></code> macro should suffice:</p>
 
@@ -60,13 +60,12 @@
 
 <h2>Extending Trivial-Benchmark</h2>
 
-<p>If you're interested in adding additional metrics, you'll want to take a look at the <code><a href="#TRIVIAL-BENCHMARK:METRIC">metric</a></code> class, as well as the related methods, <code><a href="#TRIVIAL-BENCHMARK:START">start</a></code> <code><a href="#TRIVIAL-BENCHMARK:DISCARD">discard</a></code> <code><a href="#TRIVIAL-BENCHMARK:COMMIT">commit</a></code> <code><a href="#TRIVIAL-BENCHMARK:TAKE-SAMPLE">take-sample</a></code> <code><a href="#TRIVIAL-BENCHMARK:SAMPLES">samples</a></code> <code><a href="#TRIVIAL-BENCHMARK:SAMPLE-SIZE">sample-size</a></code> <code><a href="#TRIVIAL-BENCHMARK:CONDENSE">condense</a></code> <code><a href="#TRIVIAL-BENCHMARK:REDUCE-SAMPLES">reduce-samples</a></code> <code><a href="#TRIVIAL-BENCHMARK:COMPUTE">compute</a></code> <code><a href="#TRIVIAL-BENCHMARK:REPORT">report</a></code> <code><a href="#TRIVIAL-BENCHMARK:RESET">reset</a></code>. For a basic <code><a href="#TRIVIAL-BENCHMARK:METRIC">metric</a></code>, you only need to implement <code><a href="#TRIVIAL-BENCHMARK:START">start</a></code>, <code><a href="#TRIVIAL-BENCHMARK:DISCARD">discard</a></code>, <code><a href="#TRIVIAL-BENCHMARK:COMMIT">commit</a></code>, <code><a href="#TRIVIAL-BENCHMARK:SAMPLES">samples</a></code>, and <code><a href="#TRIVIAL-BENCHMARK:TAKE-SAMPLE">take-sample</a></code>. The other functions have standard methods that will do their computations based on those five.</p>
+<p>If you're interested in adding additional metrics, you'll want to take a look at the <code><a href="#TRIVIAL-BENCHMARK:METRIC">metric</a></code> class, as well as the related methods, <code><a href="#TRIVIAL-BENCHMARK:START">start</a></code> <code>stop</code> <code><a href="#TRIVIAL-BENCHMARK:DISCARD">discard</a></code> <code><a href="#TRIVIAL-BENCHMARK:COMMIT">commit</a></code> <code><a href="#TRIVIAL-BENCHMARK:TAKE-SAMPLE">take-sample</a></code> <code><a href="#TRIVIAL-BENCHMARK:SAMPLES">samples</a></code> <code><a href="#TRIVIAL-BENCHMARK:SAMPLE-SIZE">sample-size</a></code> <code><a href="#TRIVIAL-BENCHMARK:CONDENSE">condense</a></code> <code><a href="#TRIVIAL-BENCHMARK:REDUCE-SAMPLES">reduce-samples</a></code> <code><a href="#TRIVIAL-BENCHMARK:COMPUTE">compute</a></code> <code><a href="#TRIVIAL-BENCHMARK:REPORT">report</a></code> <code><a href="#TRIVIAL-BENCHMARK:RESET">reset</a></code>. For a basic <code><a href="#TRIVIAL-BENCHMARK:METRIC">metric</a></code>, you only need to implement <code><a href="#TRIVIAL-BENCHMARK:START">start</a></code>, <code>stop</code>, <code><a href="#TRIVIAL-BENCHMARK:COMMIT">commit</a></code>, <code><a href="#TRIVIAL-BENCHMARK:SAMPLES">samples</a></code>, and <code><a href="#TRIVIAL-BENCHMARK:TAKE-SAMPLE">take-sample</a></code>. The other functions have standard methods that will do their computations based on those five.</p>
 
-<p>If you have a function that returns a current state of your sample and simply want to have the metric show the delta between <code><a href="#TRIVIAL-BENCHMARK:START">start</a></code> and <code><a href="#TRIVIAL-BENCHMARK:COMMIT">commit</a></code>, you can use <code><a href="#TRIVIAL-BENCHMARK:DEFINE-DELTA-METRIC">define-delta-metric</a></code>.</p>
+<p>If you have a function that returns a current state of your sample and simply want to have the metric show the delta between <code><a href="#TRIVIAL-BENCHMARK:START">start</a></code> and <code>stop</code>, you can use <code><a href="#TRIVIAL-BENCHMARK:DEFINE-DELTA-METRIC">define-delta-metric</a></code>.</p>
 
-<pre><code>(<a href="#TRIVIAL-BENCHMARK:DEFINE-DELTA-METRIC">define-delta-metric</a> run-time
-  (<a href="http://l1sp.org/cl//">/</a> (<a href="http://l1sp.org/cl/get-internal-run-time">get-internal-run-time</a>)
-     internal-time-units-per-second))
+<pre><code>(<a href="#TRIVIAL-BENCHMARK:DEFINE-DELTA-METRIC">define-delta-metric</a> (<a href="#TRIVIAL-BENCHMARK:RUN-TIME">run-time</a> internal-time-units-per-second)
+  (<a href="http://l1sp.org/cl/get-internal-run-time">get-internal-run-time</a>))
 </code></pre>
 
 <p>You can also implement a new computation type that is used to display the different metrics in the table. For that, simply write a method on <code><a href="#TRIVIAL-BENCHMARK:COMPUTE">compute</a></code> with the name of your computation as an eql-specializer and then push the name onto <code><a href="#TRIVIAL-BENCHMARK:*DEFAULT-COMPUTATIONS*">*default-computations*</a></code> so that it's always displayed when using <code><a href="#TRIVIAL-BENCHMARK:REPORT">report</a></code>. As an example, the maximum is simply calculated as follows:</p>
@@ -74,523 +73,733 @@
 <pre><code>(<a href="http://l1sp.org/cl/defmethod">defmethod</a> compute ((x (<a href="http://l1sp.org/cl/eql">eql</a> :maximum)) (<a href="#TRIVIAL-BENCHMARK:METRIC">metric</a> metric))
   (<a href="#TRIVIAL-BENCHMARK:REDUCE-SAMPLES">reduce-samples</a> metric #'max))
 </code></pre>
+
+<h2>Benchmark Suites</h2>
+
+<p>Analogous to unit testing, <em>performance testing</em> or <em>benchmark testing</em> is a useful way to measure performance regressions in a code base. Trivial-Benchmark has <strong>preliminary support</strong> for defining and running benchmarks.</p>
+
+<p>First, a <em>benchmark package</em> needs to be defined, which is essentially a normal Common Lisp package with some additional bookkeeping.</p>
+
+<pre><code>(<a href="#TRIVIAL-BENCHMARK:DEFINE-BENCHMARK-PACKAGE">define-benchmark-package</a> #:my-app-benchmarks
+  (:use #:my-app)
+  (:export #:run-benchmarks))
+</code></pre>
+
+<p>The macro <code><a href="#TRIVIAL-BENCHMARK:DEFINE-BENCHMARK-PACKAGE">define-benchmark-package</a></code> automatically uses the <code>COMMON-LISP</code> and the <code>TRIVIAL-BENCHMARK</code> packages.</p>
+
+<p>After the package has been defined, you can define benchmarks like normal Lisp function definitions using the <code><a href="#TRIVIAL-BENCHMARK:DEFINE-BENCHMARK">define-benchmark</a></code> macro. Within the <code><a href="#TRIVIAL-BENCHMARK:DEFINE-BENCHMARK">define-benchmark</a></code> macro, you use <code><a href="#TRIVIAL-BENCHMARK:WITH-BENCHMARK-SAMPLING">with-benchmark-sampling</a></code> around forms that you wish to measure.</p>
+
+<pre><code>(<a href="#TRIVIAL-BENCHMARK:DEFINE-BENCHMARK">define-benchmark</a> measure-trig ()
+  (<a href="http://l1sp.org/cl/declare">declare</a> (<a href="http://l1sp.org/cl/optimize">optimize</a> speed))
+  (<a href="http://l1sp.org/cl/loop">loop</a> :repeat 100000
+        :for r := (<a href="http://l1sp.org/cl/random">random</a> 1.0d0)
+        :do (<a href="#TRIVIAL-BENCHMARK:WITH-BENCHMARK-SAMPLING">with-benchmark-sampling</a>
+              (<a href="http://l1sp.org/cl/+">+</a> (<a href="http://l1sp.org/cl/sin">sin</a> r)
+                 (<a href="http://l1sp.org/cl/cos">cos</a> r)
+                 (<a href="http://l1sp.org/cl/tan">tan</a> r)))))
+</code></pre>
+
+<p>The macro <code><a href="#TRIVIAL-BENCHMARK:WITH-BENCHMARK-SAMPLING">with-benchmark-sampling</a></code> can be called many times throughout the body of the <code><a href="#TRIVIAL-BENCHMARK:DEFINE-BENCHMARK">define-benchmark</a></code>, and even called within functions called within the body. In other words, you're able to write something like this:</p>
+
+<pre><code>(<a href="http://l1sp.org/cl/defun">defun</a> trig-trial (r)
+  (<a href="#TRIVIAL-BENCHMARK:WITH-BENCHMARK-SAMPLING">with-benchmark-sampling</a>
+    (<a href="http://l1sp.org/cl/+">+</a> (<a href="http://l1sp.org/cl/sin">sin</a> r) (<a href="http://l1sp.org/cl/cos">cos</a> r) (<a href="http://l1sp.org/cl/tan">tan</a> r))))
+
+(<a href="http://l1sp.org/cl/defun">defun</a> inv-trig-trial (r)
+  (<a href="#TRIVIAL-BENCHMARK:WITH-BENCHMARK-SAMPLING">with-benchmark-sampling</a>
+    (<a href="http://l1sp.org/cl/+">+</a> (<a href="http://l1sp.org/cl/asin">asin</a> r) (<a href="http://l1sp.org/cl/acos">acos</a> r) (<a href="http://l1sp.org/cl/atan">atan</a> r))))
+
+(<a href="#TRIVIAL-BENCHMARK:DEFINE-BENCHMARK">define-benchmark</a> measure-all-trig ()
+  (<a href="http://l1sp.org/cl/declare">declare</a> (<a href="http://l1sp.org/cl/optimize">optimize</a> speed))
+  (<a href="http://l1sp.org/cl/loop">loop</a> :repeat 100000
+        :for r := (<a href="http://l1sp.org/cl/random">random</a> 1.0d0)
+        :do (trig-trial r)
+            (inv-trig-trial r)))
+</code></pre>
+
+<p>You can run the benchmarks of a package by doing:</p>
+
+<pre><code>(<a href="#TRIVIAL-BENCHMARK:RUN-PACKAGE-BENCHMARKS">run-package-benchmarks</a> :package ':my-app-benchmarks
+                        :verbose t)
+</code></pre>
+
+<p>You can elide the <code>:package</code> argument if you're in the package already. Running this will give:</p>
+
+<pre><code>&gt; (<a href="#TRIVIAL-BENCHMARK:RUN-PACKAGE-BENCHMARKS">run-package-benchmarks</a> :package ':my-app-benchmarks 
+                          :verbose t)
+Benchmarking MEASURE-ALL-TRIG...done.
+Benchmarking BENCH-TRIG...done.
+#&lt;HASH-TABLE :TEST EQ :COUNT 2 {1002FD8243}&gt;
+</code></pre>
+
+<p>The returned hash table contains a summary of all of the statistics, which you can further process as needed (e.g., record, plot, etc.). The table maps the benchmark names to an alist of metrics and their computed statistics. We can inspect this easily enough:</p>
+
+<pre><code>&gt; (alexandria:hash-table-alist *)
+((BENCH-TRIG
+  (<a href="#TRIVIAL-BENCHMARK:REAL-TIME">REAL-TIME</a> :SAMPLES 100000 :TOTAL 52/125 :MINIMUM 0 :MAXIMUM 3/1000 :MEDIAN 0
+   :AVERAGE 13/3125000 :DEVIATION 6.482819e-5)
+  (<a href="#TRIVIAL-BENCHMARK:RUN-TIME">RUN-TIME</a> :SAMPLES 100000 :TOTAL 383/1000 :MINIMUM 0 :MAXIMUM 1/1000 :MEDIAN
+   0 :AVERAGE 383/100000000 :DEVIATION 6.176837e-5)
+  (<a href="#TRIVIAL-BENCHMARK:USER-RUN-TIME">USER-RUN-TIME</a> :SAMPLES 100000 :TOTAL 52663/250000 :MINIMUM 1/1000000
+   :MAXIMUM 53/1000000 :MEDIAN 1/500000 :AVERAGE 52663/25000000000 :DEVIATION
+   9.770944e-7)
+  (<a href="#TRIVIAL-BENCHMARK:SYSTEM-RUN-TIME">SYSTEM-RUN-TIME</a> :SAMPLES 100000 :TOTAL 94299/500000 :MINIMUM 1/1000000
+   :MAXIMUM 87/1000000 :MEDIAN 1/500000 :AVERAGE 94299/50000000000 :DEVIATION
+   1.1286627e-6)
+  (<a href="#TRIVIAL-BENCHMARK:PAGE-FAULTS">PAGE-FAULTS</a> :SAMPLES 100000 :TOTAL 0 :MINIMUM 0 :MAXIMUM 0 :MEDIAN 0
+   :AVERAGE 0 :DEVIATION 0.0)
+  (<a href="#TRIVIAL-BENCHMARK:GC-RUN-TIME">GC-RUN-TIME</a> :SAMPLES 100000 :TOTAL 0 :MINIMUM 0 :MAXIMUM 0 :MEDIAN 0
+   :AVERAGE 0 :DEVIATION 0.0)
+  (<a href="#TRIVIAL-BENCHMARK:BYTES-CONSED">BYTES-CONSED</a> :SAMPLES 100000 :TOTAL 0 :MINIMUM 0 :MAXIMUM 0 :MEDIAN 0
+   :AVERAGE 0 :DEVIATION 0.0)
+  (<a href="#TRIVIAL-BENCHMARK:EVAL-CALLS">EVAL-CALLS</a> :SAMPLES 100000 :TOTAL 0 :MINIMUM 0 :MAXIMUM 0 :MEDIAN 0 :AVERAGE
+   0 :DEVIATION 0.0))
+ (MEASURE-ALL-TRIG
+  (<a href="#TRIVIAL-BENCHMARK:REAL-TIME">REAL-TIME</a> :SAMPLES 200000 :TOTAL 102/125 :MINIMUM 0 :MAXIMUM 1/200 :MEDIAN 0
+   :AVERAGE 51/12500000 :DEVIATION 6.4601496e-5)
+  (<a href="#TRIVIAL-BENCHMARK:RUN-TIME">RUN-TIME</a> :SAMPLES 200000 :TOTAL 77/100 :MINIMUM 0 :MAXIMUM 1/1000 :MEDIAN 0
+   :AVERAGE 77/20000000 :DEVIATION 6.192881e-5)
+  (<a href="#TRIVIAL-BENCHMARK:USER-RUN-TIME">USER-RUN-TIME</a> :SAMPLES 200000 :TOTAL 41371/100000 :MINIMUM 1/1000000
+   :MAXIMUM 1/12500 :MEDIAN 1/500000 :AVERAGE 41371/20000000000 :DEVIATION
+   1.2130914e-6)
+  (<a href="#TRIVIAL-BENCHMARK:SYSTEM-RUN-TIME">SYSTEM-RUN-TIME</a> :SAMPLES 200000 :TOTAL 363543/1000000 :MINIMUM 1/1000000
+   :MAXIMUM 11/100000 :MEDIAN 1/500000 :AVERAGE 363543/200000000000 :DEVIATION
+   1.4713012e-6)
+  (<a href="#TRIVIAL-BENCHMARK:PAGE-FAULTS">PAGE-FAULTS</a> :SAMPLES 200000 :TOTAL 0 :MINIMUM 0 :MAXIMUM 0 :MEDIAN 0
+   :AVERAGE 0 :DEVIATION 0.0)
+  (<a href="#TRIVIAL-BENCHMARK:GC-RUN-TIME">GC-RUN-TIME</a> :SAMPLES 200000 :TOTAL 0 :MINIMUM 0 :MAXIMUM 0 :MEDIAN 0
+   :AVERAGE 0 :DEVIATION 0.0)
+  (<a href="#TRIVIAL-BENCHMARK:BYTES-CONSED">BYTES-CONSED</a> :SAMPLES 200000 :TOTAL 15106048 :MINIMUM 0 :MAXIMUM 131072
+   :MEDIAN 0 :AVERAGE 236032/3125 :DEVIATION 1595.1276)
+  (<a href="#TRIVIAL-BENCHMARK:EVAL-CALLS">EVAL-CALLS</a> :SAMPLES 200000 :TOTAL 0 :MINIMUM 0 :MAXIMUM 0 :MEDIAN 0 :AVERAGE
+   0 :DEVIATION 0.0)))</code></pre>
 </span>
-        </c:documentate>
+        
       </article>
       <article>
-        <h2>Copyright</h2>
-        <span>trivial-benchmark</span> is licensed under the <span><a href="https://tldrlegal.com/search?q=Artistic">Artistic</a></span> license and &amp;#169;<span>2015</span> <span>Nicolas Hafner &lt;shinmera@tymoon.eu&gt;</span>. 
+        
+          <h2>Copyright</h2>
+          <span>trivial-benchmark</span> is licensed under the <span><a href="https://tldrlegal.com/search?q=Artistic">Artistic</a></span> license.
+          
+            © <span>Nicolas Hafner &lt;shinmera@tymoon.eu&gt;</span>
+            .
+          
+          
+        
       </article>
-      <article id="symbol-index">
-        <h2>Package Index</h2>
-        <ul><li class="package">
-            <h3>
-              <a name="TRIVIAL-BENCHMARK" href="#TRIVIAL-BENCHMARK">TRIVIAL-BENCHMARK</a>
-              <span class="nicknames">(BENCHMARK ORG.SHIRAKUMO.TRIVIAL-BENCHMARK)</span>
-            </h3>
-            <ul><li>
-                <a name="TRIVIAL-BENCHMARK:METRIC"/>
-                <article>
-                  <header>
-                    <span>ACCESSOR</span>
-                    <code>
-                      <h4><a href="#TRIVIAL-BENCHMARK:METRIC">METRIC</a></h4>
-                      <span/>
-                      <span>(TYPE TIMER)</span>
-                    </code>
-                  </header>
-                  <pre>Returns the metric of TYPE in TIMER if any.
-The metric must match the type by TYPE=</pre>
-                </article>
-              </li><li>
-                <a name="TRIVIAL-BENCHMARK:METRICS"/>
-                <article>
-                  <header>
-                    <span>ACCESSOR</span>
-                    <code>
-                      <h4><a href="#TRIVIAL-BENCHMARK:METRICS">METRICS</a></h4>
-                      <span/>
-                      <span>(TIMER)</span>
-                    </code>
-                  </header>
-                  <pre>Returns a list of metrics stored in TIMER.</pre>
-                </article>
-              </li><li>
-                <a name="TRIVIAL-BENCHMARK:RUNNING"/>
-                <article>
-                  <header>
-                    <span>ACCESSOR</span>
-                    <code>
-                      <h4><a href="#TRIVIAL-BENCHMARK:RUNNING">RUNNING</a></h4>
-                      <span/>
-                      <span>(METRIC)</span>
-                    </code>
-                  </header>
-                  <pre>Returns T if the metric is currently sampling.
-
-See START
-See DISCARD
-See COMMIT</pre>
-                </article>
-              </li><li>
-                <a name="TRIVIAL-BENCHMARK:SAMPLES"/>
-                <article>
-                  <header>
-                    <span>ACCESSOR</span>
-                    <code>
-                      <h4><a href="#TRIVIAL-BENCHMARK:SAMPLES">SAMPLES</a></h4>
-                      <span/>
-                      <span>(METRIC)</span>
-                    </code>
-                  </header>
-                  <pre>Return a sequence of committed samples stored in METRIC.</pre>
-                </article>
-              </li><li>
-                <a name="TRIVIAL-BENCHMARK:STARTING-VALUE"/>
-                <article>
-                  <header>
-                    <span>ACCESSOR</span>
-                    <code>
-                      <h4><a href="#TRIVIAL-BENCHMARK:STARTING-VALUE">STARTING-VALUE</a></h4>
-                      <span/>
-                      <span>(DELTA-METRIC)</span>
-                    </code>
-                  </header>
-                  <pre>Returns the value stored when START was called on the DELTA-METRIC.</pre>
-                </article>
-              </li><li>
-                <a name="TRIVIAL-BENCHMARK:BYTES-CONSED"/>
-                <article>
-                  <header>
-                    <span>CLASS</span>
-                    <code>
-                      <h4><a href="#TRIVIAL-BENCHMARK:BYTES-CONSED">BYTES-CONSED</a></h4>
-                      <span/>
-                      <span/>
-                    </code>
-                  </header>
-                  <pre>Samples SB-IMPL::GET-BYTES-CONSED.</pre>
-                </article>
-              </li><li>
-                <a name="TRIVIAL-BENCHMARK:CPU-CYCLES"/>
-                <article>
-                  <header>
-                    <span>CLASS</span>
-                    <code>
-                      <h4><a href="#TRIVIAL-BENCHMARK:CPU-CYCLES">CPU-CYCLES</a></h4>
-                      <span/>
-                      <span/>
-                    </code>
-                  </header>
-                  <pre>Samples SB-IMPL::ELAPSED-CYCLES.</pre>
-                </article>
-              </li><li>
-                <a name="TRIVIAL-BENCHMARK:DELTA-METRIC"/>
-                <article>
-                  <header>
-                    <span>CLASS</span>
-                    <code>
-                      <h4><a href="#TRIVIAL-BENCHMARK:DELTA-METRIC">DELTA-METRIC</a></h4>
-                      <span/>
-                      <span/>
-                    </code>
-                  </header>
-                  <pre>A LISTED-METRIC that calculates a sample point according to the delta between the START and COMMIT.
+      
+        <article id="symbol-index">
+          <h2>Package Index</h2>
+          <ul><li class="package">
+              <h3>
+                <a name="TRIVIAL-BENCHMARK" href="#TRIVIAL-BENCHMARK">TRIVIAL-BENCHMARK</a>
+                <span class="nicknames">(BENCHMARK ORG.SHIRAKUMO.TRIVIAL-BENCHMARK)</span>
+              </h3>
+              <ul><li>
+                  <a name="TRIVIAL-BENCHMARK:*DEFAULT-COMPUTATIONS*"/>
+                  <article>
+                    <header class="special">
+                      <span class="type">special</span>
+                      <code>
+                        <h4><a href="#TRIVIAL-BENCHMARK:*DEFAULT-COMPUTATIONS*" class="name">*DEFAULT-COMPUTATIONS*</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">The list of computation-names used to print the REPORT table.</pre>
+                  </article>
+                </li><li>
+                  <a name="TRIVIAL-BENCHMARK:*DEFAULT-METRICS*"/>
+                  <article>
+                    <header class="special">
+                      <span class="type">special</span>
+                      <code>
+                        <h4><a href="#TRIVIAL-BENCHMARK:*DEFAULT-METRICS*" class="name">*DEFAULT-METRICS*</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">The list of class-names used to populate a TIMER by default.</pre>
+                  </article>
+                </li><li>
+                  <a name="TRIVIAL-BENCHMARK:BYTES-CONSED"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#TRIVIAL-BENCHMARK:BYTES-CONSED" class="name">BYTES-CONSED</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Samples SB-IMPL::GET-BYTES-CONSED.</pre>
+                  </article>
+                </li><li>
+                  <a name="TRIVIAL-BENCHMARK:CPU-CYCLES"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#TRIVIAL-BENCHMARK:CPU-CYCLES" class="name">CPU-CYCLES</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Samples SB-IMPL::ELAPSED-CYCLES.</pre>
+                  </article>
+                </li><li>
+                  <a name="TRIVIAL-BENCHMARK:DELTA-METRIC"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#TRIVIAL-BENCHMARK:DELTA-METRIC" class="name">DELTA-METRIC</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">A LISTED-METRIC that calculates a sample point according to the delta between the START and COMMIT.
 Sub-classes of this must implement the TAKE-SAMPLE method.
 
 See LISTED-METRIC</pre>
-                </article>
-              </li><li>
-                <a name="TRIVIAL-BENCHMARK:EVAL-CALLS"/>
-                <article>
-                  <header>
-                    <span>CLASS</span>
-                    <code>
-                      <h4><a href="#TRIVIAL-BENCHMARK:EVAL-CALLS">EVAL-CALLS</a></h4>
-                      <span/>
-                      <span/>
-                    </code>
-                  </header>
-                  <pre>Samples SB-IMPL::*EVAL-CALLS*.</pre>
-                </article>
-              </li><li>
-                <a name="TRIVIAL-BENCHMARK:GC-RUN-TIME"/>
-                <article>
-                  <header>
-                    <span>CLASS</span>
-                    <code>
-                      <h4><a href="#TRIVIAL-BENCHMARK:GC-RUN-TIME">GC-RUN-TIME</a></h4>
-                      <span/>
-                      <span/>
-                    </code>
-                  </header>
-                  <pre>Samples SB-IMPL::*GC-RUN-TIME* in seconds.</pre>
-                </article>
-              </li><li>
-                <a name="TRIVIAL-BENCHMARK:LISTED-METRIC"/>
-                <article>
-                  <header>
-                    <span>CLASS</span>
-                    <code>
-                      <h4><a href="#TRIVIAL-BENCHMARK:LISTED-METRIC">LISTED-METRIC</a></h4>
-                      <span/>
-                      <span/>
-                    </code>
-                  </header>
-                  <pre>A METRIC that implements its sample storage as a list. 
+                  </article>
+                </li><li>
+                  <a name="TRIVIAL-BENCHMARK:EVAL-CALLS"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#TRIVIAL-BENCHMARK:EVAL-CALLS" class="name">EVAL-CALLS</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Samples SB-IMPL::*EVAL-CALLS*.</pre>
+                  </article>
+                </li><li>
+                  <a name="TRIVIAL-BENCHMARK:GC-RUN-TIME"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#TRIVIAL-BENCHMARK:GC-RUN-TIME" class="name">GC-RUN-TIME</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Samples SB-IMPL::*GC-RUN-TIME* in seconds.</pre>
+                  </article>
+                </li><li>
+                  <a name="TRIVIAL-BENCHMARK:METRIC"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#TRIVIAL-BENCHMARK:METRIC" class="name">METRIC</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">A class container for sampling information.</pre>
+                  </article>
+                </li><li>
+                  <a name="TRIVIAL-BENCHMARK:PAGE-FAULTS"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#TRIVIAL-BENCHMARK:PAGE-FAULTS" class="name">PAGE-FAULTS</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Samples the third value (page-faults) of SB-SYS:GET-SYSTEM-INFO in seconds.</pre>
+                  </article>
+                </li><li>
+                  <a name="TRIVIAL-BENCHMARK:REAL-TIME"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#TRIVIAL-BENCHMARK:REAL-TIME" class="name">REAL-TIME</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Samples the results of GET-INTERNAL-REAL-TIME in seconds.</pre>
+                  </article>
+                </li><li>
+                  <a name="TRIVIAL-BENCHMARK:RUN-TIME"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#TRIVIAL-BENCHMARK:RUN-TIME" class="name">RUN-TIME</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Samples the results of GET-INTERNAL-RUN-TIME in seconds.</pre>
+                  </article>
+                </li><li>
+                  <a name="TRIVIAL-BENCHMARK:SYSTEM-RUN-TIME"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#TRIVIAL-BENCHMARK:SYSTEM-RUN-TIME" class="name">SYSTEM-RUN-TIME</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Samples the second value (system-run-time) of SB-SYS:GET-SYSTEM-INFO in seconds.</pre>
+                  </article>
+                </li><li>
+                  <a name="TRIVIAL-BENCHMARK:TIMER"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#TRIVIAL-BENCHMARK:TIMER" class="name">TIMER</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Class container for a set of METRICS.</pre>
+                  </article>
+                </li><li>
+                  <a name="TRIVIAL-BENCHMARK:USER-RUN-TIME"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#TRIVIAL-BENCHMARK:USER-RUN-TIME" class="name">USER-RUN-TIME</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Samples the first value (user-run-time) of SB-SYS:GET-SYSTEM-INFO in seconds.</pre>
+                  </article>
+                </li><li>
+                  <a name="TRIVIAL-BENCHMARK:VECTOR-METRIC"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#TRIVIAL-BENCHMARK:VECTOR-METRIC" class="name">VECTOR-METRIC</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">A METRIC that implements its sample storage as a vector. 
 SAMPLES is SETF-able for this class.
 
 See METRIC</pre>
-                </article>
-              </li><li>
-                <a name="TRIVIAL-BENCHMARK:METRIC"/>
-                <article>
-                  <header>
-                    <span>CLASS</span>
-                    <code>
-                      <h4><a href="#TRIVIAL-BENCHMARK:METRIC">METRIC</a></h4>
-                      <span/>
-                      <span/>
-                    </code>
-                  </header>
-                  <pre>A class container for sampling information.</pre>
-                </article>
-              </li><li>
-                <a name="TRIVIAL-BENCHMARK:PAGE-FAULTS"/>
-                <article>
-                  <header>
-                    <span>CLASS</span>
-                    <code>
-                      <h4><a href="#TRIVIAL-BENCHMARK:PAGE-FAULTS">PAGE-FAULTS</a></h4>
-                      <span/>
-                      <span/>
-                    </code>
-                  </header>
-                  <pre>Samples the third value (page-faults) of SB-SYS:GET-SYSTEM-INFO in seconds.</pre>
-                </article>
-              </li><li>
-                <a name="TRIVIAL-BENCHMARK:REAL-TIME"/>
-                <article>
-                  <header>
-                    <span>CLASS</span>
-                    <code>
-                      <h4><a href="#TRIVIAL-BENCHMARK:REAL-TIME">REAL-TIME</a></h4>
-                      <span/>
-                      <span/>
-                    </code>
-                  </header>
-                  <pre>Samples the results of GET-INTERNAL-REAL-TIME in seconds.</pre>
-                </article>
-              </li><li>
-                <a name="TRIVIAL-BENCHMARK:RUN-TIME"/>
-                <article>
-                  <header>
-                    <span>CLASS</span>
-                    <code>
-                      <h4><a href="#TRIVIAL-BENCHMARK:RUN-TIME">RUN-TIME</a></h4>
-                      <span/>
-                      <span/>
-                    </code>
-                  </header>
-                  <pre>Samples the results of GET-INTERNAL-RUN-TIME in seconds.</pre>
-                </article>
-              </li><li>
-                <a name="TRIVIAL-BENCHMARK:SYSTEM-RUN-TIME"/>
-                <article>
-                  <header>
-                    <span>CLASS</span>
-                    <code>
-                      <h4><a href="#TRIVIAL-BENCHMARK:SYSTEM-RUN-TIME">SYSTEM-RUN-TIME</a></h4>
-                      <span/>
-                      <span/>
-                    </code>
-                  </header>
-                  <pre>Samples the second value (system-run-time) of SB-SYS:GET-SYSTEM-INFO in seconds.</pre>
-                </article>
-              </li><li>
-                <a name="TRIVIAL-BENCHMARK:TIMER"/>
-                <article>
-                  <header>
-                    <span>CLASS</span>
-                    <code>
-                      <h4><a href="#TRIVIAL-BENCHMARK:TIMER">TIMER</a></h4>
-                      <span/>
-                      <span/>
-                    </code>
-                  </header>
-                  <pre>Class container for a set of METRICS.</pre>
-                </article>
-              </li><li>
-                <a name="TRIVIAL-BENCHMARK:USER-RUN-TIME"/>
-                <article>
-                  <header>
-                    <span>CLASS</span>
-                    <code>
-                      <h4><a href="#TRIVIAL-BENCHMARK:USER-RUN-TIME">USER-RUN-TIME</a></h4>
-                      <span/>
-                      <span/>
-                    </code>
-                  </header>
-                  <pre>Samples the first value (user-run-time) of SB-SYS:GET-SYSTEM-INFO in seconds.</pre>
-                </article>
-              </li><li>
-                <a name="TRIVIAL-BENCHMARK:MAKE-TIMER"/>
-                <article>
-                  <header>
-                    <span>FUNCTION</span>
-                    <code>
-                      <h4><a href="#TRIVIAL-BENCHMARK:MAKE-TIMER">MAKE-TIMER</a></h4>
-                      <span/>
-                      <span>(&amp;OPTIONAL (METRIC-TYPES *DEFAULT-METRICS*))</span>
-                    </code>
-                  </header>
-                  <pre>Creates a TIMER object using the given METRIC-TYPES</pre>
-                </article>
-              </li><li>
-                <a name="TRIVIAL-BENCHMARK:MAP-METRICS"/>
-                <article>
-                  <header>
-                    <span>FUNCTION</span>
-                    <code>
-                      <h4><a href="#TRIVIAL-BENCHMARK:MAP-METRICS">MAP-METRICS</a></h4>
-                      <span/>
-                      <span>(TIMER FUNCTION)</span>
-                    </code>
-                  </header>
-                  <pre>Maps the metrics in TIMER, calling FUNCTION with each.</pre>
-                </article>
-              </li><li>
-                <a name="TRIVIAL-BENCHMARK:PRINT-TABLE"/>
-                <article>
-                  <header>
-                    <span>FUNCTION</span>
-                    <code>
-                      <h4><a href="#TRIVIAL-BENCHMARK:PRINT-TABLE">PRINT-TABLE</a></h4>
-                      <span/>
-                      <span>(TABLE &amp;KEY (STREAM T) (PADDING 2))</span>
-                    </code>
-                  </header>
-                  <pre>Prints a table (each list in TABLE being a row) with proper spacing.</pre>
-                </article>
-              </li><li>
-                <a name="TRIVIAL-BENCHMARK:ROUND-TO"/>
-                <article>
-                  <header>
-                    <span>FUNCTION</span>
-                    <code>
-                      <h4><a href="#TRIVIAL-BENCHMARK:ROUND-TO">ROUND-TO</a></h4>
-                      <span/>
-                      <span>(NUM N)</span>
-                    </code>
-                  </header>
-                  <pre>Rounds NUM to N digits after the dot.</pre>
-                </article>
-              </li><li>
-                <a name="TRIVIAL-BENCHMARK:TYPE="/>
-                <article>
-                  <header>
-                    <span>FUNCTION</span>
-                    <code>
-                      <h4><a href="#TRIVIAL-BENCHMARK:TYPE=">TYPE=</a></h4>
-                      <span/>
-                      <span>(A B)</span>
-                    </code>
-                  </header>
-                  <pre>Returns T if A and B denote the same type (are subtypes of one another)
+                  </article>
+                </li><li>
+                  <a name="TRIVIAL-BENCHMARK:METRIC"/>
+                  <article>
+                    <header class="accessor">
+                      <span class="type">accessor</span>
+                      <code>
+                        <h4><a href="#TRIVIAL-BENCHMARK:METRIC" class="name">METRIC</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(TYPE TIMER)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Returns the metric of TYPE in TIMER if any.
+The metric must match the type by TYPE=</pre>
+                  </article>
+                </li><li>
+                  <a name="TRIVIAL-BENCHMARK:METRICS"/>
+                  <article>
+                    <header class="accessor">
+                      <span class="type">accessor</span>
+                      <code>
+                        <h4><a href="#TRIVIAL-BENCHMARK:METRICS" class="name">METRICS</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(TIMER)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Returns a list of metrics stored in TIMER.</pre>
+                  </article>
+                </li><li>
+                  <a name="TRIVIAL-BENCHMARK:RUNNING"/>
+                  <article>
+                    <header class="accessor">
+                      <span class="type">accessor</span>
+                      <code>
+                        <h4><a href="#TRIVIAL-BENCHMARK:RUNNING" class="name">RUNNING</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(METRIC)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Returns T if the metric is currently sampling.
+
+See START
+See STOP</pre>
+                  </article>
+                </li><li>
+                  <a name="TRIVIAL-BENCHMARK:SAMPLES"/>
+                  <article>
+                    <header class="accessor">
+                      <span class="type">accessor</span>
+                      <code>
+                        <h4><a href="#TRIVIAL-BENCHMARK:SAMPLES" class="name">SAMPLES</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(METRIC)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Return a sequence of committed samples stored in METRIC.</pre>
+                  </article>
+                </li><li>
+                  <a name="TRIVIAL-BENCHMARK:STARTING-VALUE"/>
+                  <article>
+                    <header class="accessor">
+                      <span class="type">accessor</span>
+                      <code>
+                        <h4><a href="#TRIVIAL-BENCHMARK:STARTING-VALUE" class="name">STARTING-VALUE</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(DELTA-METRIC)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Returns the value stored when START was called on the DELTA-METRIC.</pre>
+                  </article>
+                </li><li>
+                  <a name="TRIVIAL-BENCHMARK:FIND-BENCHMARK-PACKAGE"/>
+                  <article>
+                    <header class="function">
+                      <span class="type">function</span>
+                      <code>
+                        <h4><a href="#TRIVIAL-BENCHMARK:FIND-BENCHMARK-PACKAGE" class="name">FIND-BENCHMARK-PACKAGE</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(PACKAGE-DESIGNATOR)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Find the benchmark package designated by PACKAGE-DESIGNATOR and return it, otherwise return NIL if it doesn't exist.</pre>
+                  </article>
+                </li><li>
+                  <a name="TRIVIAL-BENCHMARK:MAKE-TIMER"/>
+                  <article>
+                    <header class="function">
+                      <span class="type">function</span>
+                      <code>
+                        <h4><a href="#TRIVIAL-BENCHMARK:MAKE-TIMER" class="name">MAKE-TIMER</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(&amp;OPTIONAL (METRIC-TYPES *DEFAULT-METRICS*))</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Creates a TIMER object using the given METRIC-TYPES</pre>
+                  </article>
+                </li><li>
+                  <a name="TRIVIAL-BENCHMARK:MAP-METRICS"/>
+                  <article>
+                    <header class="function">
+                      <span class="type">function</span>
+                      <code>
+                        <h4><a href="#TRIVIAL-BENCHMARK:MAP-METRICS" class="name">MAP-METRICS</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(TIMER FUNCTION)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Maps the metrics in TIMER, calling FUNCTION with each.</pre>
+                  </article>
+                </li><li>
+                  <a name="TRIVIAL-BENCHMARK:PRINT-TABLE"/>
+                  <article>
+                    <header class="function">
+                      <span class="type">function</span>
+                      <code>
+                        <h4><a href="#TRIVIAL-BENCHMARK:PRINT-TABLE" class="name">PRINT-TABLE</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(TABLE &amp;KEY (STREAM T) (PADDING 2))</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Prints a table (each list in TABLE being a row) with proper spacing.</pre>
+                  </article>
+                </li><li>
+                  <a name="TRIVIAL-BENCHMARK:ROUND-TO"/>
+                  <article>
+                    <header class="function">
+                      <span class="type">function</span>
+                      <code>
+                        <h4><a href="#TRIVIAL-BENCHMARK:ROUND-TO" class="name">ROUND-TO</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(NUM N)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Rounds NUM to N digits after the dot.</pre>
+                  </article>
+                </li><li>
+                  <a name="TRIVIAL-BENCHMARK:RUN-PACKAGE-BENCHMARKS"/>
+                  <article>
+                    <header class="function">
+                      <span class="type">function</span>
+                      <code>
+                        <h4><a href="#TRIVIAL-BENCHMARK:RUN-PACKAGE-BENCHMARKS" class="name">RUN-PACKAGE-BENCHMARKS</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(&amp;KEY (PACKAGE *PACKAGE*) (VERBOSE NIL))</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Run all of the benchmarks associated with the benchmark package PACKAGE, the current one by default.
+
+Return a hash table mapping benchmark names to their metrics represented as lists. In particular, it will be an alist whose CARs are metrics and whose CDRs are plists of computations.
+
+VERBOSE is a generalized boolean that controls output verbosity while testing.
+</pre>
+                  </article>
+                </li><li>
+                  <a name="TRIVIAL-BENCHMARK:TYPE="/>
+                  <article>
+                    <header class="function">
+                      <span class="type">function</span>
+                      <code>
+                        <h4><a href="#TRIVIAL-BENCHMARK:TYPE=" class="name">TYPE=</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(A B)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Returns T if A and B denote the same type (are subtypes of one another)
 If one of the arguments does not denote a type, the result of TYPE-OF is used in their place.</pre>
-                </article>
-              </li><li>
-                <a name="TRIVIAL-BENCHMARK:COMMIT"/>
-                <article>
-                  <header>
-                    <span>GENERIC</span>
-                    <code>
-                      <h4><a href="#TRIVIAL-BENCHMARK:COMMIT">COMMIT</a></h4>
-                      <span/>
-                      <span>(METRIC)</span>
-                    </code>
-                  </header>
-                  <pre>Stop and commit the current sample of METRIC. 
-Sets RUNNING to NIL.</pre>
-                </article>
-              </li><li>
-                <a name="TRIVIAL-BENCHMARK:COMPUTE"/>
-                <article>
-                  <header>
-                    <span>GENERIC</span>
-                    <code>
-                      <h4><a href="#TRIVIAL-BENCHMARK:COMPUTE">COMPUTE</a></h4>
-                      <span/>
-                      <span>(THING METRIC)</span>
-                    </code>
-                  </header>
-                  <pre>Compute a value of the statistical computation THING for METRIC based on its current samples.</pre>
-                </article>
-              </li><li>
-                <a name="TRIVIAL-BENCHMARK:CONDENSE"/>
-                <article>
-                  <header>
-                    <span>GENERIC</span>
-                    <code>
-                      <h4><a href="#TRIVIAL-BENCHMARK:CONDENSE">CONDENSE</a></h4>
-                      <span/>
-                      <span>(SAMPLE)</span>
-                    </code>
-                  </header>
-                  <pre>Turn the SAMPLE value into a usable number.</pre>
-                </article>
-              </li><li>
-                <a name="TRIVIAL-BENCHMARK:DISCARD"/>
-                <article>
-                  <header>
-                    <span>GENERIC</span>
-                    <code>
-                      <h4><a href="#TRIVIAL-BENCHMARK:DISCARD">DISCARD</a></h4>
-                      <span/>
-                      <span>(METRIC)</span>
-                    </code>
-                  </header>
-                  <pre>Stop and discard the current sample of METRIC. 
-Sets RUNNING to NIL.</pre>
-                </article>
-              </li><li>
-                <a name="TRIVIAL-BENCHMARK:METRIC-TYPES"/>
-                <article>
-                  <header>
-                    <span>GENERIC</span>
-                    <code>
-                      <h4><a href="#TRIVIAL-BENCHMARK:METRIC-TYPES">METRIC-TYPES</a></h4>
-                      <span/>
-                      <span>(TIMER)</span>
-                    </code>
-                  </header>
-                  <pre>Returns the types of metrics in TIMER.</pre>
-                </article>
-              </li><li>
-                <a name="TRIVIAL-BENCHMARK:REDUCE-SAMPLES"/>
-                <article>
-                  <header>
-                    <span>GENERIC</span>
-                    <code>
-                      <h4><a href="#TRIVIAL-BENCHMARK:REDUCE-SAMPLES">REDUCE-SAMPLES</a></h4>
-                      <span/>
-                      <span>(METRIC FUNCTION)</span>
-                    </code>
-                  </header>
-                  <pre>Apply FUNCTION to the samples stored in METRIC in a REDUCE fashion.</pre>
-                </article>
-              </li><li>
-                <a name="TRIVIAL-BENCHMARK:REPORT"/>
-                <article>
-                  <header>
-                    <span>GENERIC</span>
-                    <code>
-                      <h4><a href="#TRIVIAL-BENCHMARK:REPORT">REPORT</a></h4>
-                      <span/>
-                      <span>(METRIC &amp;KEY STREAM COMPUTATIONS)</span>
-                    </code>
-                  </header>
-                  <pre>Print a report of all COMPUTATIONS for METRIC to STREAM</pre>
-                </article>
-              </li><li>
-                <a name="TRIVIAL-BENCHMARK:RESET"/>
-                <article>
-                  <header>
-                    <span>GENERIC</span>
-                    <code>
-                      <h4><a href="#TRIVIAL-BENCHMARK:RESET">RESET</a></h4>
-                      <span/>
-                      <span>(METRIC)</span>
-                    </code>
-                  </header>
-                  <pre>Reset the METRIC and remove all its samples.</pre>
-                </article>
-              </li><li>
-                <a name="TRIVIAL-BENCHMARK:SAMPLE-SIZE"/>
-                <article>
-                  <header>
-                    <span>GENERIC</span>
-                    <code>
-                      <h4><a href="#TRIVIAL-BENCHMARK:SAMPLE-SIZE">SAMPLE-SIZE</a></h4>
-                      <span/>
-                      <span>(METRIC)</span>
-                    </code>
-                  </header>
-                  <pre>Return the number of samples stored in METRIC.</pre>
-                </article>
-              </li><li>
-                <a name="TRIVIAL-BENCHMARK:START"/>
-                <article>
-                  <header>
-                    <span>GENERIC</span>
-                    <code>
-                      <h4><a href="#TRIVIAL-BENCHMARK:START">START</a></h4>
-                      <span/>
-                      <span>(METRIC)</span>
-                    </code>
-                  </header>
-                  <pre>Begin a sample for METRIC. 
+                  </article>
+                </li><li>
+                  <a name="TRIVIAL-BENCHMARK:COMMIT"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#TRIVIAL-BENCHMARK:COMMIT" class="name">COMMIT</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(METRIC)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Commit the current sample of METRIC.
+If the metric is running, call STOP first.</pre>
+                  </article>
+                </li><li>
+                  <a name="TRIVIAL-BENCHMARK:COMPUTE"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#TRIVIAL-BENCHMARK:COMPUTE" class="name">COMPUTE</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(THING METRIC)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Compute a value of the statistical computation THING for METRIC based on its current samples.</pre>
+                  </article>
+                </li><li>
+                  <a name="TRIVIAL-BENCHMARK:CONDENSE"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#TRIVIAL-BENCHMARK:CONDENSE" class="name">CONDENSE</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(SAMPLE)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Turn the SAMPLE value into a usable number.</pre>
+                  </article>
+                </li><li>
+                  <a name="TRIVIAL-BENCHMARK:DISCARD"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#TRIVIAL-BENCHMARK:DISCARD" class="name">DISCARD</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(METRIC)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Discard the current sample of METRIC.
+If the metric is running, call STOP first.</pre>
+                  </article>
+                </li><li>
+                  <a name="TRIVIAL-BENCHMARK:METRIC-TYPES"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#TRIVIAL-BENCHMARK:METRIC-TYPES" class="name">METRIC-TYPES</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(TIMER)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Returns the types of metrics in TIMER.</pre>
+                  </article>
+                </li><li>
+                  <a name="TRIVIAL-BENCHMARK:REDUCE-SAMPLES"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#TRIVIAL-BENCHMARK:REDUCE-SAMPLES" class="name">REDUCE-SAMPLES</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(METRIC FUNCTION)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Apply FUNCTION to the samples stored in METRIC in a REDUCE fashion.</pre>
+                  </article>
+                </li><li>
+                  <a name="TRIVIAL-BENCHMARK:REPORT"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#TRIVIAL-BENCHMARK:REPORT" class="name">REPORT</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(METRIC &amp;KEY STREAM COMPUTATIONS)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Print a report of all COMPUTATIONS for METRIC to STREAM</pre>
+                  </article>
+                </li><li>
+                  <a name="TRIVIAL-BENCHMARK:RESET"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#TRIVIAL-BENCHMARK:RESET" class="name">RESET</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(METRIC)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Reset the METRIC and remove all its samples.</pre>
+                  </article>
+                </li><li>
+                  <a name="TRIVIAL-BENCHMARK:SAMPLE-SIZE"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#TRIVIAL-BENCHMARK:SAMPLE-SIZE" class="name">SAMPLE-SIZE</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(METRIC)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Return the number of samples stored in METRIC.</pre>
+                  </article>
+                </li><li>
+                  <a name="TRIVIAL-BENCHMARK:START"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#TRIVIAL-BENCHMARK:START" class="name">START</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(METRIC)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Begin a sample for METRIC. 
 Sets RUNNING to T.</pre>
-                </article>
-              </li><li>
-                <a name="TRIVIAL-BENCHMARK:TAKE-SAMPLE"/>
-                <article>
-                  <header>
-                    <span>GENERIC</span>
-                    <code>
-                      <h4><a href="#TRIVIAL-BENCHMARK:TAKE-SAMPLE">TAKE-SAMPLE</a></h4>
-                      <span/>
-                      <span>(METRIC)</span>
-                    </code>
-                  </header>
-                  <pre>Return a current sampling value for METRIC.
+                  </article>
+                </li><li>
+                  <a name="TRIVIAL-BENCHMARK:TAKE-SAMPLE"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#TRIVIAL-BENCHMARK:TAKE-SAMPLE" class="name">TAKE-SAMPLE</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(METRIC)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Return a current sampling value for METRIC.
 
 Note that not all metrics must implement a method for this function.
 It is perfectly plausible for a metric to skip this method if it
 cannot provide a sample value at any point in time.</pre>
-                </article>
-              </li><li>
-                <a name="TRIVIAL-BENCHMARK:DEFINE-DELTA-METRIC"/>
-                <article>
-                  <header>
-                    <span>MACRO</span>
-                    <code>
-                      <h4><a href="#TRIVIAL-BENCHMARK:DEFINE-DELTA-METRIC">DEFINE-DELTA-METRIC</a></h4>
-                      <span/>
-                      <span>(&amp;REST ARGS)</span>
-                    </code>
-                  </header>
-                  <pre>Shortcut to define a DELTA-METRIC.
+                  </article>
+                </li><li>
+                  <a name="TRIVIAL-BENCHMARK:DEFINE-BENCHMARK"/>
+                  <article>
+                    <header class="macro">
+                      <span class="type">macro</span>
+                      <code>
+                        <h4><a href="#TRIVIAL-BENCHMARK:DEFINE-BENCHMARK" class="name">DEFINE-BENCHMARK</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(&amp;REST ARGS)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Define a benchmark named NAME. The structure of this macro is that of DEFUN, except that WITH-BENCHMARK-SAMPLING can be called to collect metrics on the enclosed forms.
+
+ARGS must be a lambda list that does not require arguments present at the call site.</pre>
+                  </article>
+                </li><li>
+                  <a name="TRIVIAL-BENCHMARK:DEFINE-BENCHMARK-PACKAGE"/>
+                  <article>
+                    <header class="macro">
+                      <span class="type">macro</span>
+                      <code>
+                        <h4><a href="#TRIVIAL-BENCHMARK:DEFINE-BENCHMARK-PACKAGE" class="name">DEFINE-BENCHMARK-PACKAGE</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(&amp;REST ARGS)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Define a package as if by DEFPACKAGE, except that both the COMMON-LISP and TRIVIAL-BENCHMARK packages are used, and that this package is designated as one containing benchmarks.</pre>
+                  </article>
+                </li><li>
+                  <a name="TRIVIAL-BENCHMARK:DEFINE-DELTA-METRIC"/>
+                  <article>
+                    <header class="macro">
+                      <span class="type">macro</span>
+                      <code>
+                        <h4><a href="#TRIVIAL-BENCHMARK:DEFINE-DELTA-METRIC" class="name">DEFINE-DELTA-METRIC</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(&amp;REST ARGS)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Shortcut to define a DELTA-METRIC.
 The SAMPLE-POINT-FORMS should return a number to use to calculate a delta.
+NAME can be either just a NAME or a list of the form (NAME UNITS) where
+UNITS is the number the sample points are divided by when saving them.
+For example, if you sample a function of milliseconds, but want to report
+in seconds, set UNITS to 1000. Doing this instead of dividing directly in
+the form avoids potential consing when running into bignums.
 
 See DELTA-METRIC</pre>
-                </article>
-              </li><li>
-                <a name="TRIVIAL-BENCHMARK:DO-METRICS"/>
-                <article>
-                  <header>
-                    <span>MACRO</span>
-                    <code>
-                      <h4><a href="#TRIVIAL-BENCHMARK:DO-METRICS">DO-METRICS</a></h4>
-                      <span/>
-                      <span>(&amp;REST ARGS)</span>
-                    </code>
-                  </header>
-                  <pre>Binds METRIC-VAR to each metric of TIMER and then evaluates FORMS. 
+                  </article>
+                </li><li>
+                  <a name="TRIVIAL-BENCHMARK:DO-METRICS"/>
+                  <article>
+                    <header class="macro">
+                      <span class="type">macro</span>
+                      <code>
+                        <h4><a href="#TRIVIAL-BENCHMARK:DO-METRICS" class="name">DO-METRICS</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(&amp;REST ARGS)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Binds METRIC-VAR to each metric of TIMER and then evaluates FORMS. 
 Returns the value of RESULT-FORM after the loop.</pre>
-                </article>
-              </li><li>
-                <a name="TRIVIAL-BENCHMARK:WITH-SAMPLING"/>
-                <article>
-                  <header>
-                    <span>MACRO</span>
-                    <code>
-                      <h4><a href="#TRIVIAL-BENCHMARK:WITH-SAMPLING">WITH-SAMPLING</a></h4>
-                      <span/>
-                      <span>(&amp;REST ARGS)</span>
-                    </code>
-                  </header>
-                  <pre>Takes a sample for the evaluation time of FORMS and stores it in the timer given by TIMER-FORM.
+                  </article>
+                </li><li>
+                  <a name="TRIVIAL-BENCHMARK:WITH-BENCHMARK-SAMPLING"/>
+                  <article>
+                    <header class="macro">
+                      <span class="type">macro</span>
+                      <code>
+                        <h4><a href="#TRIVIAL-BENCHMARK:WITH-BENCHMARK-SAMPLING" class="name">WITH-BENCHMARK-SAMPLING</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(&amp;REST ARGS)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Benchmark the execution of the forms FORMS within the context of a DEFINE-BENCH macro. Acts like PROGN.</pre>
+                  </article>
+                </li><li>
+                  <a name="TRIVIAL-BENCHMARK:WITH-SAMPLING"/>
+                  <article>
+                    <header class="macro">
+                      <span class="type">macro</span>
+                      <code>
+                        <h4><a href="#TRIVIAL-BENCHMARK:WITH-SAMPLING" class="name">WITH-SAMPLING</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(&amp;REST ARGS)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Takes a sample for the evaluation time of FORMS and stores it in the timer given by TIMER-FORM.
 Acts like a PROGN.
 
 Specifically, START is called, then FORMS are evaluated. If an error occurs within the body,
@@ -599,52 +808,27 @@ DISCARD is called on the timer, otherwise COMMIT is called once the body exits.
 See START
 See DISCARD
 See COMMIT</pre>
-                </article>
-              </li><li>
-                <a name="TRIVIAL-BENCHMARK:WITH-TIMING"/>
-                <article>
-                  <header>
-                    <span>MACRO</span>
-                    <code>
-                      <h4><a href="#TRIVIAL-BENCHMARK:WITH-TIMING">WITH-TIMING</a></h4>
-                      <span/>
-                      <span>(&amp;REST ARGS)</span>
-                    </code>
-                  </header>
-                  <pre>Evaluates FORMS N times, using WITH-SAMPLING on the value of TIMER-FORM each iteration.
+                  </article>
+                </li><li>
+                  <a name="TRIVIAL-BENCHMARK:WITH-TIMING"/>
+                  <article>
+                    <header class="macro">
+                      <span class="type">macro</span>
+                      <code>
+                        <h4><a href="#TRIVIAL-BENCHMARK:WITH-TIMING" class="name">WITH-TIMING</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(&amp;REST ARGS)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Evaluates FORMS N times, using WITH-SAMPLING on the value of TIMER-FORM each iteration.
 At the end, runs REPORT on the timer with STREAM and COMPUTATIONS.
 
 See WITH-SAMPLING</pre>
-                </article>
-              </li><li>
-                <a name="TRIVIAL-BENCHMARK:*DEFAULT-COMPUTATIONS*"/>
-                <article>
-                  <header>
-                    <span>SPECIAL</span>
-                    <code>
-                      <h4><a href="#TRIVIAL-BENCHMARK:*DEFAULT-COMPUTATIONS*">*DEFAULT-COMPUTATIONS*</a></h4>
-                      <span/>
-                      <span/>
-                    </code>
-                  </header>
-                  <pre>The list of computation-names used to print the REPORT table.</pre>
-                </article>
-              </li><li>
-                <a name="TRIVIAL-BENCHMARK:*DEFAULT-METRICS*"/>
-                <article>
-                  <header>
-                    <span>SPECIAL</span>
-                    <code>
-                      <h4><a href="#TRIVIAL-BENCHMARK:*DEFAULT-METRICS*">*DEFAULT-METRICS*</a></h4>
-                      <span/>
-                      <span/>
-                    </code>
-                  </header>
-                  <pre>The list of class-names used to populate a TIMER by default.</pre>
-                </article>
-              </li></ul>
-          </li></ul>
-      </article>
+                  </article>
+                </li></ul>
+            </li></ul>
+        </article>
+      
     </div>
   </body>
 </html>
