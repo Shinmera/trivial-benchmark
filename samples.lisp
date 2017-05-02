@@ -13,6 +13,12 @@ SAMPLES is SETF-able for this class.
 
 See METRIC"))
 
+(defmethod reset ((metric vector-metric))
+  (setf (fill-pointer (samples metric)) 0))
+
+(defmethod reset :after ((metric vector-metric))
+  (discard metric))
+
 (defclass delta-metric (vector-metric)
   ((starting-value :initform NIL :accessor starting-value)
    (stopping-value :initform NIL :accessor stopping-value)
