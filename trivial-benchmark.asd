@@ -4,10 +4,6 @@
  Author: Nicolas Hafner <shinmera@tymoon.eu>
 |#
 
-(defpackage #:org.tymoonnext.trivial-benchmark.asdf
-  (:use #:cl #:asdf))
-(in-package #:org.tymoonnext.trivial-benchmark.asdf)
-
 (defsystem trivial-benchmark
   :name "Trivial-Benchmark"
   :version "2.0.0"
