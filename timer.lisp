@@ -124,14 +124,28 @@ cannot provide a sample value at any point in time."))
   (:method ((computations list) (metric metric))
     (mapcar (lambda (thing) (compute thing metric)) computations)))
 
-(defgeneric report (metric &key stream computations)
-  (:documentation "Print a report of all COMPUTATIONS for METRIC to STREAM")
-  (:method ((metric metric) &key (stream T) (computations *default-computations*))
+(defgeneric report-to (stream thing &key computations)
+  (:method ((stream (eql T)) thing &key computations)
+    (report-to *standard-output*  thing :computations computations))
+  (:method ((string (eql NIL)) thing &key computations)
+    (with-output-to-string (stream)
+      (report-to stream  thing :computations computations)))
+  (:method ((stream stream) (metric metric) &key computations)
     (print-table
      (cons (list :computation :value)
            (loop for comp in computations
                  collect (list comp (compute comp metric))))
      :stream stream)))
+
+(defgeneric report (thing &key stream computations)
+  (:documentation "Print a report of all COMPUTATIONS for THING to STREAM
+
+STREAM can be one of the following:
+ T       --- Print to *standard-output*
+ NIL     --- Print to a string and return it.
+ STREAM  --- Print to the stream")
+  (:method (thing &key (stream T) (computations *default-computations*))
+    (report-to stream thing :computations computations)))
 
 (defgeneric reset (metric)
   (:documentation "Reset the METRIC and remove all its samples."))
@@ -229,7 +243,7 @@ Returns the value of RESULT-FORM after the loop."
 (defmethod commit ((timer timer))
   (map-metrics timer #'commit))
 
-(defmethod report ((timer timer) &key (stream T) (computations *default-computations*))
+(defmethod report-to ((stream stream) (timer timer) &key computations)
   (if (< 0 (reduce #'max (mapcar #'sample-size (metrics timer))))
       (format-timer-stats stream timer computations)
       (format stream "No metric has any samples yet.")))
@@ -273,5 +287,4 @@ See WITH-SAMPLING"
        (loop repeat ,n
              do (with-sampling (,timer)
                   ,@forms))
-       (report ,timer :stream ,stream :computations ,computations)
-       NIL)))
+       (report ,timer :stream ,stream :computations ,computations))))
