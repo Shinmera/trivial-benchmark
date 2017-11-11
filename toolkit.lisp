@@ -9,10 +9,11 @@
 (defun print-table (table &key (stream T) (padding 2))
   "Prints a table (each list in TABLE being a row) with proper spacing."
   (let ((widths (apply #'map 'list #'max (loop for row in table
-                                               collect (loop for field in row
-                                                             collect (+ padding (length (princ-to-string field))))))))
-    (dolist (row table)
-      (apply #'format stream (format NIL "~~&~{~~~da~}~~%" widths) row))))
+                                            collect (loop for field in row
+                                                       collect (+ padding (length (princ-to-string field))))))))
+    (flet ((format-row (row) (apply #'format NIL (format NIL "~~&~{~~~da~}~~%" widths) row)))
+      (let ((formatted-rows (mapcar #'format-row table)))
+        (format stream "~{~a~}" formatted-rows)))))
 
 (defun round-to (num n)
   "Rounds NUM to N digits after the dot."
