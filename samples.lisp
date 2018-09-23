@@ -97,15 +97,15 @@ See DELTA-METRIC"
 
   (define-delta-metric (gc-run-time 1000)
     "Samples SB-IMPL::*GC-RUN-TIME* in seconds."
-    sb-impl::*gc-run-time*)
+    sb-ext:*gc-run-time*)
   
   (define-delta-metric bytes-consed
     "Samples SB-IMPL::GET-BYTES-CONSED."
-    (sb-impl::get-bytes-consed))
+    (sb-ext:get-bytes-consed))
 
   (define-delta-metric eval-calls
     "Samples SB-IMPL::*EVAL-CALLS*."
-    sb-impl::*eval-calls*)
+    sb-kernel:*eval-calls*)
 
   (defclass cpu-cycles (vector-metric)
     ((h0 :accessor cpu-cycles-h0)
