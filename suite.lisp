@@ -17,6 +17,16 @@
         nil
         package-object)))
 
+(defmethod report-to ((stream stream) (hash-table hash-table) &key (computations *default-computations))
+  (dolist (result (alexandria:hash-table-alist hash-table))
+    (destructuring-bind (name &rest metrics) result
+      (format stream "Results for benchmark ~a~%" (string name))
+      (print-table (cons (cons :- computations)
+                         (loop :for metric :in metrics
+                               :collect (remove-if (lambda (elt) (find elt computations))
+                                                   metric))))
+      (format stream "~%"))))
+
 (defmacro define-benchmark-package (name &body package-options)
   "Define a package as if by DEFPACKAGE, except that both the COMMON-LISP and TRIVIAL-BENCHMARK packages are used, and that this package is designated as one containing benchmarks."
   `(progn
