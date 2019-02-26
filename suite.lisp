@@ -17,7 +17,7 @@
         nil
         package-object)))
 
-(defmethod report-to ((stream stream) (hash-table hash-table) &key (computations *default-computations))
+(defmethod report-to ((stream stream) (hash-table hash-table) &key (computations *default-computations*))
   (dolist (result (alexandria:hash-table-alist hash-table))
     (destructuring-bind (name &rest metrics) result
       (format stream "Results for benchmark ~a~%" (string name))
