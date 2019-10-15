@@ -6,13 +6,25 @@
 
 (in-package #:org.shirakumo.trivial-benchmark)
 
+(defvar *print-rationals* t
+  "Print metrics as rationals where appropriate if T. Otherwise, print as floats.")
+
+(defun floatify (val)
+  (if (and val
+           (not *print-rationals*)
+           (not (integerp val))
+           (rationalp val))
+      (float val)
+      val))
+
 (defun print-table (table &key (stream T) (padding 2))
   "Prints a table (each list in TABLE being a row) with proper spacing."
   (let ((widths (apply #'map 'list #'max (loop for row in table
                                                collect (loop for field in row
                                                              collect (+ padding (length (princ-to-string field))))))))
     (dolist (row table)
-      (apply #'format stream (format NIL "~~&~{~~~da~}~~%" widths) row))))
+      (apply #'format stream (format NIL "~~&~{~~~da~}~~%" widths)
+             (mapcar #'floatify row)))))
 
 (defun round-to (num n)
   "Rounds NUM to N digits after the dot."

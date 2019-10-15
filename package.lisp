@@ -29,6 +29,7 @@
   (:export
    #:*default-metrics*
    #:*default-computations*
+   #:*print-rationals*
    #:metric
    #:running
    #:start
