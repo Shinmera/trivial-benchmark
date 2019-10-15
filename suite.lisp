@@ -76,6 +76,9 @@ ARGS must be a lambda list that does not require arguments present at the call s
                            *benchmark-packages*))
          ',benchmark-name))))
 
+(defun make-suite-report-table ()
+  (make-hash-table :test 'eq))
+
 (defun run-package-benchmarks (&key (package *package*)
                                     (verbose nil))
   "Run all of the benchmarks associated with the benchmark package PACKAGE, the current one by default.
@@ -87,7 +90,7 @@ VERBOSE is a generalized boolean that controls output verbosity while testing.
   (let ((benchmark-package (find-benchmark-package package)))
     (when (null benchmark-package)
       (error "The benchmark package ~A isn't defined." package))
-    (let ((*current-suite-report* (make-hash-table :test 'eq)))
+    (let ((*current-suite-report* (make-suite-report-table)))
       ;; Collect the report.
       (loop :for fn :in (gethash benchmark-package *benchmark-packages*)
             :do (when verbose
@@ -97,3 +100,10 @@ VERBOSE is a generalized boolean that controls output verbosity while testing.
                   (format *trace-output* "done.~%")))
       ;; Return the results collected.
       *current-suite-report*)))
+
+(defmacro with-suite-report ((suite) &body body)
+  `(let* ((,suite (or (and (boundp '*current-suite-report*)
+                           *current-suite-report*)
+                      (make-suite-report-table)))
+          (*current-suite-report* ,suite))
+     ,@body))

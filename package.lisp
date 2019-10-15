@@ -62,5 +62,6 @@
    #:define-benchmark-package
    #:define-benchmark
    #:with-benchmark-sampling
-   #:run-package-benchmarks))
+   #:run-package-benchmarks
+   #:with-suite-report))
 
