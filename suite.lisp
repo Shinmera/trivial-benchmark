@@ -79,6 +79,20 @@ ARGS must be a lambda list that does not require arguments present at the call s
 (defun make-suite-report-table ()
   (make-hash-table :test 'eq))
 
+(defun print-verbose-before-message (fn &optional (out *trace-output*))
+  (format out "~&Benchmarking ~S..." fn)
+  (force-output out))
+
+(defun print-verbose-after-message (&optional (out *trace-output*))
+  (format out "done.~%"))
+
+(defun run-one-benchmark (fn &optional verbose)
+  (when verbose
+    (print-verbose-before-message fn))
+  (funcall fn)
+  (when verbose
+    (print-verbose-after-message)))
+
 (defun run-package-benchmarks (&key (package *package*)
                                     (verbose nil))
   "Run all of the benchmarks associated with the benchmark package PACKAGE, the current one by default.
@@ -93,12 +107,7 @@ VERBOSE is a generalized boolean that controls output verbosity while testing.
     (let ((*current-suite-report* (make-suite-report-table)))
       ;; Collect the report.
       (loop :for fn :in (gethash benchmark-package *benchmark-packages*)
-            :do (when verbose
-                  (format *trace-output* "~&Benchmarking ~S..." fn)
-                  (force-output *trace-output*))
-                (funcall fn)
-                (when verbose
-                  (format *trace-output* "done.~%")))
+            :do (run-one-benchmark fn verbose))
       ;; Return the results collected.
       *current-suite-report*)))
 
