@@ -83,15 +83,16 @@ ARGS must be a lambda list that does not require arguments present at the call s
   (format out "~&Benchmarking ~S..." fn)
   (force-output out))
 
-(defun print-verbose-after-message (&optional (out *trace-output*))
-  (format out "done.~%"))
+(defun print-verbose-after-message (fn &optional (out *trace-output*) (report *current-suite-report*))
+  (format out "done.~%Benchmark outcome for ~S:~%  ~a~%"
+          fn (gethash fn report)))
 
 (defun run-one-benchmark (fn &optional verbose)
   (when verbose
     (print-verbose-before-message fn))
   (funcall fn)
   (when verbose
-    (print-verbose-after-message)))
+    (print-verbose-after-message fn)))
 
 (defun run-package-benchmarks (&key (package *package*)
                                     (verbose nil))
