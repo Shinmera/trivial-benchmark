@@ -94,7 +94,8 @@ VERBOSE is a generalized boolean that controls output verbosity while testing.
       ;; Collect the report.
       (loop :for fn :in (gethash benchmark-package *benchmark-packages*)
             :do (when verbose
-                  (format *trace-output* "~&Benchmarking ~S..." fn))
+                  (format *trace-output* "~&Benchmarking ~S..." fn)
+                  (force-output *trace-output*))
                 (funcall fn)
                 (when verbose
                   (format *trace-output* "done.~%")))
