@@ -1,9 +1,3 @@
-#|
- This file is a part of Trivial-Benchmark
- (c) 2016 Shirakumo http://tymoon.eu (shinmera@tymoon.eu)
- Author: Robert Smith <quad@symbo1ics.com>
-|#
-
 (in-package #:org.shirakumo.trivial-benchmark)
 
 (defvar *benchmark-packages* (make-hash-table :test 'eq)
