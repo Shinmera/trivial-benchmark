@@ -1,0 +1,26 @@
+# About Trivial-Benchmark
+Frequently I want to do a quick benchmark comparison of my functions. ``time`` is nice to get some data, but it's limited to a single run so there isn't really much of a statistical value in it. Trivial-Benchmark runs a block of code many times and outputs some statistical data for it. On SBCL this includes the data from ``time``, for all other implementations just the REAL- and RUN-TIME data.
+
+# How-To
+We assume that there's a local or global nickname for ``org.shirakumo.trivial-benchmark`` called ``tb``. You can activate the global nickname with ``(org.shirakumo.trivial-benchmark:add-nickname)``.
+
+For basic throwaway benchmarking, the ``with-timing`` macro should suffice:
+
+    (tb:with-timing (1000)
+      (+ 1 1))
+
+However, you can also do more complex timing using `make-timer` and `with-sampling`. The former creates a new timer object (with an optional list of metrics to sample) and the latter collects one sample for each metric of the timer for the duration of the body forms.
+
+    (defvar *timer* (tb:make-timer))
+    
+    (tb:with-sampling (*timer*)
+      (+ 1 1))
+    
+    (tb:with-sampling (*timer*)
+      (expt 10 100))
+    
+    (tb:report *timer*)
+    
+    (tb:reset *timer*)
+    
+    (tb:report *timer*)
