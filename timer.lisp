@@ -1,6 +1,6 @@
 (in-package #:org.shirakumo.trivial-benchmark)
 
-(defvar *default-computations* '(:samples :total :minimum :maximum :median :average :deviation))
+(defvar *default-computations* '(:total :minimum :maximum :median :average :deviation))
 (defvar *default-metrics* ())
 
 (defgeneric compute (thing samples))
