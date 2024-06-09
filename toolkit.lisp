@@ -48,3 +48,6 @@
   (if (listp thing)
       (first thing)
       thing))
+
+(defun add-nickname ()
+  (rename-package #.*package* (package-name #.*package*) '(#:tb #:trivial-benchmark)))

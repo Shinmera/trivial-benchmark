@@ -1,9 +1,9 @@
 (defpackage #:org.shirakumo.trivial-benchmark
-  (:nicknames #:trivial-benchmark)
   (:use #:cl)
   ;; toolkit.lisp
   (:export
-   #:print-table)
+   #:print-table
+   #:add-nickname)
   ;; sampler.lisp
   (:export
    #:*default-samplers*

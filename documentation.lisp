@@ -16,7 +16,12 @@ every cell.
 FORMAT is the format to print the table in. Can be one of:
   :PRINC   --- justs PRINCs the table instead
   :MINIMAL --- prints the table as small as it can
-  :FANCY   --- prints the table with box drawing glyphs"))
+  :FANCY   --- prints the table with box drawing glyphs")
+
+  (function add-nickname
+    "Adds the nikcnames TRIVIAL-BENCHMARK and TB to the package.
+
+This is for convenience."))
 
 ;; sampler.lisp
 (docs:define-docs
