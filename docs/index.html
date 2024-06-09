@@ -1,0 +1,251 @@
+<!DOCTYPE html> <html lang="EN"> <head> <meta charset="utf-8"> <title>Trivial Benchmark</title> <style>html body{margin:0 auto 0 auto;padding:20px;max-width:1024px;font-family:sans-serif;font-size:14pt;overflow-y:scroll;}html body a{text-decoration:none;}html body a[href]{color:#0055AA;}html body a[href]:hover{color:#0088EE;}html body pre{background:#FAFAFA;border:1px solid #DDDDDD;padding:0.75em;overflow-x:auto;}html body pre >code a[href]{color:#223388;}article.project h1{font-size:1.7em;}article.project h1,article.project h2,article.project h3,article.project h4,article.project h5,article.project h6{margin:0.2em 0 0.1em 0;text-indent:1em;}article.project >header{text-align:center;}article.project >header img.logo{display:block;margin:auto;max-height:170px;}article.project >header h1{display:inline-block;text-indent:0;font-size:2.5em;}article.project >header .version{vertical-align:bottom;}article.project >header .languages{margin-top:-0.5em;text-transform:capitalize;}article.project >header .description{margin:0;}article.project >header .pages{margin-top:0.5em;font-size:1.2em;text-transform:capitalize;}article.project >header .pages a{display:inline-block;padding:0 0.2em;}article.project >section{margin:1em 0 1em 0;}article.project >section img{max-width:100%;}article.project #index >ul{list-style:none;margin:0;padding:0;}article.project .row label{display:inline-block;min-width:8em;}article.project #system .row{display:flex;}article.project #system #dependencies{display:inline;margin:0;padding:0;}article.project #system #dependencies li{display:inline;padding:0 0.2em;}article.project #system #author label{vertical-align:top;}article.project #system #author ul{display:inline-block;margin:0;padding:0;list-style:none;}article.definition{margin:1em 0 0 0;}article.definition >header h1,article.definition >header h2,article.definition >header h3,article.definition >header h4,article.definition >header h5,article.definition >header h6{text-indent:0;display:inline-block;}article.definition >header ul{display:inline-block;list-style:none;margin:0;padding:0;}article.definition >header ul li{display:inline-block;padding:0 0.2em 0 0;}article.definition >header .visibility{display:none;}article.definition >header .visibility,article.definition >header .type{text-transform:lowercase;}article.definition >header .source-link{visibility:hidden;float:right;}article.definition >header .source-link:after{visibility:visible;content:"[SRC]";}article.definition .docstring{margin:0 0 0 1em;}article.definition .docstring pre{font-size:0.8em;white-space:pre-wrap;}.definition.package >header ul.nicknames{display:inline-block;list-style:none;margin:0;padding:0 0 0 1em;}.definition.package >header ul.nicknames li{display:inline;}.definition.package >header ul.nicknames:before{content:"(";}.definition.package >header ul.nicknames:after{content:")";}.definition.package ul.definitions{margin:0;list-style:none;padding:0 0 0 0.5em;}.definition.callable >header .name:before,.definition.type >header .name:before{content:"(";font-weight:normal;}.definition.callable >header .arguments:after,.definition.type >header .arguments:after{content:")";}.definition.callable >header .arguments .arguments:before,.definition.type >header .arguments .arguments:before{content:"(";}.definition.callable >header .arguments .argument,.definition.type >header .arguments .argument{padding:0;}.definition.callable >header .arguments .argument.lambda-list-keyword,.definition.type >header .arguments .argument.lambda-list-keyword{color:#991155;}.definition li>mark{background:none;border-left:0.3em solid #0088EE;padding-left:0.3em;display:block;}</style> </head> <body> <article class="project"> <header>   <h1>trivial benchmark</h1>   <span class="version">3.0.0</span>    <p class="description">An easy to use benchmarking system.</p>   </header> <section id="documentation"><article><h1 id="about trivial-benchmark">About Trivial-Benchmark</h1><p>Frequently I want to do a quick benchmark comparison of my functions. <code><a href="#MACRO-FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3ATIME" class="xref">time</a></code> is nice to get some data, but it's limited to a single run so there isn't really much of a statistical value in it. Trivial-Benchmark runs a block of code many times and outputs some statistical data for it. On SBCL this includes the data from <code><a href="#MACRO-FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3ATIME" class="xref">time</a></code>, for all other implementations just the REAL- and RUN-TIME data.</p><h1 id="how-to">How-To</h1><p>We assume that there's a local or global nickname for <code>org.shirakumo.trivial-benchmark</code> called <code>tb</code>. You can activate the global nickname with <code>(org.shirakumo.trivial-benchmark:add-nickname)</code>.</p><p>For basic throwaway benchmarking, the <code><a href="#MACRO-FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3AWITH-TIMING" class="xref">with-timing</a></code> macro should suffice:</p><code style="display:block" class="code-block" data-language="common lisp"><pre><a href="http://l1sp.org/cl/make-instance" class="xref">(</a><a href="#MACRO-FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3AWITH-TIMING" class="xref">tb:with-timing</a> (1000)
+  (<a href="http://l1sp.org/cl/%2B" class="xref">+</a> 1 1))</pre></code><p>However, you can also do more complex timing using your own <code><a href="#CLASS%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3ATIMER" class="xref">timer</a></code> and <code><a href="#MACRO-FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3AWITH-SAMPLING" class="xref">with-sampling</a></code>. The former creates a new timer object (with an optional list of metrics to sample) and the latter collects one sample for each metric of the timer for the duration of the body forms.</p><code style="display:block" class="code-block" data-language="common lisp"><pre>(<a href="http://l1sp.org/cl/defvar" class="xref">defvar</a> *timer* (<a href="http://l1sp.org/cl/make-instance" class="xref">make-instance</a> <a href="#CLASS%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3ATIMER" class="xref">'tb:timer</a>))
+
+(<a href="#MACRO-FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3AWITH-SAMPLING" class="xref">tb:with-sampling</a> (*timer*)
+  (<a href="http://l1sp.org/cl/%2B" class="xref">+</a> 1 1))
+
+(<a href="#MACRO-FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3AWITH-SAMPLING" class="xref">tb:with-sampling</a> (*timer*)
+  (<a href="http://l1sp.org/cl/expt" class="xref">expt</a> 10 100))
+
+(<a href="#FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3AREPORT" class="xref">tb:report</a> *timer*)
+
+(<a href="#GENERIC-FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3ARESET" class="xref">tb:reset</a> *timer*)
+
+(<a href="#FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3AREPORT" class="xref">tb:report</a> *timer*)</pre></code></article></section>   <section id="system"> <h2>System Information</h2>  <div class="row"> <label for="version">Version:</label> <a id="version">3.0.0</a> </div>   <div class="row"> <label for="dependencies">Dependencies:</label> <ul id="dependencies"><li><a class="external" href="https://Shinmera.github.io/documentation-utils/">documentation-utils</a></li></ul> </div>   <div class="row" id="author"> <label for="author">Author:</label> <a href="mailto:shinmera@tymoon.eu">Yukari Hafner</a> </div>   <div class="row"> <label for="license">License:</label> <a id="license" href="https://github.com/shinmera/trivial-benchmark/blob/5f71dbe133dedec78809e9f30f554dfd0cc8a45a/LICENSE">zlib</a> </div>   <div class="row"> <label for="homepage">Homepage:</label> <a id="homepage" href="https://shinmera.github.io/trivial-benchmark/">https://shinmera.github.io/trivial-benchmark/</a> </div>   <div class="row"> <label for="bug-tracker">Bug Tracker:</label> <a id="bug-tracker" href="https://github.com/Shinmera/trivial-benchmark/issues">https://github.com/Shinmera/trivial-benchmark/issues</a> </div>   <div class="row"> <label for="sources">Sources:</label> <a id="sources" href="https://github.com/Shinmera/trivial-benchmark.git">https://github.com/Shinmera/trivial-benchmark.git</a> </div>  </section>    <section id="index"> <h2>Definition Index</h2> <ul> <li> <article class="definition package" id="PACKAGE ORG.SHIRAKUMO.TRIVIAL-BENCHMARK"> <header> <h3> <a href="#PACKAGE%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK">ORG.SHIRAKUMO.TRIVIAL-BENCHMARK</a> </h3> <ul class="nicknames"> <li>TB</li>  <li>TRIVIAL-BENCHMARK</li> </ul>  </header> <div class="docstring"><i>No documentation provided.</i></div> <ul class="definitions"> <li> <article class="definition special-variable" id="VARIABLE ORG.SHIRAKUMO.TRIVIAL-BENCHMARK:*DEFAULT-COMPUTATIONS*"> <header> <span class="visibility">EXTERNAL</span> <span class="type">SPECIAL-VARIABLE</span> <h4 class="name"> <a href="#VARIABLE%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3A%2ADEFAULT-COMPUTATIONS%2A">*DEFAULT-COMPUTATIONS*</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments"></ul>  <a class="source-link" href="https://github.com/shinmera/trivial-benchmark/blob/5f71dbe133dedec78809e9f30f554dfd0cc8a45a/timer.lisp#L3">Source</a>  </header> <div class="docstring"><pre>Which computations to make by default.
+
+See <a href="#GENERIC-FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3ACOMPUTE" class="xref">COMPUTE</a></pre></div> </article> </li>  <li> <article class="definition special-variable" id="VARIABLE ORG.SHIRAKUMO.TRIVIAL-BENCHMARK:*DEFAULT-METRICS*"> <header> <span class="visibility">EXTERNAL</span> <span class="type">SPECIAL-VARIABLE</span> <h4 class="name"> <a href="#VARIABLE%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3A%2ADEFAULT-METRICS%2A">*DEFAULT-METRICS*</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments"></ul>  <a class="source-link" href="https://github.com/shinmera/trivial-benchmark/blob/5f71dbe133dedec78809e9f30f554dfd0cc8a45a/timer.lisp#L4">Source</a>  </header> <div class="docstring"><pre>Which metrics to include by default.
+
+If NIL, all sampled metrics are included.
+
+See <a href="#FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3AFORMAT-TIMER-STATS" class="xref">FORMAT-TIMER-STATS</a></pre></div> </article> </li>  <li> <article class="definition special-variable" id="VARIABLE ORG.SHIRAKUMO.TRIVIAL-BENCHMARK:*DEFAULT-SAMPLERS*"> <header> <span class="visibility">EXTERNAL</span> <span class="type">SPECIAL-VARIABLE</span> <h4 class="name"> <a href="#VARIABLE%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3A%2ADEFAULT-SAMPLERS%2A">*DEFAULT-SAMPLERS*</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments"></ul>  <a class="source-link" href="https://github.com/shinmera/trivial-benchmark/blob/5f71dbe133dedec78809e9f30f554dfd0cc8a45a/sampler.lisp#L3">Source</a>  </header> <div class="docstring"><pre>Which sampler types to use by default.
+
+See <a href="#CLASS%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3ASAMPLER" class="xref">SAMPLER</a>
+See <a href="#MACRO-FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3AWITH-SAMPLING" class="xref">WITH-SAMPLING</a></pre></div> </article> </li>  <li> <article class="definition class" id="CLASS ORG.SHIRAKUMO.TRIVIAL-BENCHMARK:BYTES-CONSED"> <header> <span class="visibility">EXTERNAL</span> <span class="type">CLASS</span> <h4 class="name"> <a href="#CLASS%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3ABYTES-CONSED">BYTES-CONSED</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments"></ul>  <a class="source-link" href="https://github.com/shinmera/trivial-benchmark/blob/5f71dbe133dedec78809e9f30f554dfd0cc8a45a/sampler.lisp#L52">Source</a>  </header> <div class="docstring"><i>No documentation provided.</i></div> </article> </li>  <li> <article class="definition class" id="CLASS ORG.SHIRAKUMO.TRIVIAL-BENCHMARK:CYCLE-COUNTER"> <header> <span class="visibility">EXTERNAL</span> <span class="type">CLASS</span> <h4 class="name"> <a href="#CLASS%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3ACYCLE-COUNTER">CYCLE-COUNTER</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments"></ul>  <a class="source-link" href="https://github.com/shinmera/trivial-benchmark/blob/5f71dbe133dedec78809e9f30f554dfd0cc8a45a/sampler.lisp#L52">Source</a>  </header> <div class="docstring"><i>No documentation provided.</i></div> </article> </li>  <li> <article class="definition class" id="CLASS ORG.SHIRAKUMO.TRIVIAL-BENCHMARK:EVAL-CALLS"> <header> <span class="visibility">EXTERNAL</span> <span class="type">CLASS</span> <h4 class="name"> <a href="#CLASS%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3AEVAL-CALLS">EVAL-CALLS</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments"></ul>  <a class="source-link" href="https://github.com/shinmera/trivial-benchmark/blob/5f71dbe133dedec78809e9f30f554dfd0cc8a45a/sampler.lisp#L52">Source</a>  </header> <div class="docstring"><i>No documentation provided.</i></div> </article> </li>  <li> <article class="definition class" id="CLASS ORG.SHIRAKUMO.TRIVIAL-BENCHMARK:GC-RUN-TIME"> <header> <span class="visibility">EXTERNAL</span> <span class="type">CLASS</span> <h4 class="name"> <a href="#CLASS%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3AGC-RUN-TIME">GC-RUN-TIME</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments"></ul>  <a class="source-link" href="https://github.com/shinmera/trivial-benchmark/blob/5f71dbe133dedec78809e9f30f554dfd0cc8a45a/sampler.lisp#L52">Source</a>  </header> <div class="docstring"><i>No documentation provided.</i></div> </article> </li>  <li> <article class="definition class" id="CLASS ORG.SHIRAKUMO.TRIVIAL-BENCHMARK:REAL-TIME"> <header> <span class="visibility">EXTERNAL</span> <span class="type">CLASS</span> <h4 class="name"> <a href="#CLASS%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3AREAL-TIME">REAL-TIME</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments"></ul>  <a class="source-link" href="https://github.com/shinmera/trivial-benchmark/blob/5f71dbe133dedec78809e9f30f554dfd0cc8a45a/sampler.lisp#L46">Source</a>  </header> <div class="docstring"><i>No documentation provided.</i></div> </article> </li>  <li> <article class="definition class" id="CLASS ORG.SHIRAKUMO.TRIVIAL-BENCHMARK:RUN-TIME"> <header> <span class="visibility">EXTERNAL</span> <span class="type">CLASS</span> <h4 class="name"> <a href="#CLASS%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3ARUN-TIME">RUN-TIME</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments"></ul>  <a class="source-link" href="https://github.com/shinmera/trivial-benchmark/blob/5f71dbe133dedec78809e9f30f554dfd0cc8a45a/sampler.lisp#L49">Source</a>  </header> <div class="docstring"><i>No documentation provided.</i></div> </article> </li>  <li> <article class="definition class" id="CLASS ORG.SHIRAKUMO.TRIVIAL-BENCHMARK:SAMPLER"> <header> <span class="visibility">EXTERNAL</span> <span class="type">CLASS</span> <h4 class="name"> <a href="#CLASS%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3ASAMPLER">SAMPLER</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments"></ul>  <a class="source-link" href="https://github.com/shinmera/trivial-benchmark/blob/5f71dbe133dedec78809e9f30f554dfd0cc8a45a/sampler.lisp#L5">Source</a>  </header> <div class="docstring"><pre>Representation of a sample measuring method.
+
+See <a href="#GENERIC-FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3AVARIABLES" class="xref">VARIABLES</a>
+See <a href="#GENERIC-FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3AWRAP-MEASUREMENT-FORM" class="xref">WRAP-MEASUREMENT-FORM</a>
+See <a href="#GENERIC-FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3ACOMMIT-SAMPLES-FORM" class="xref">COMMIT-SAMPLES-FORM</a>
+See <a href="#MACRO-FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3ADEFINE-SAMPLER" class="xref">DEFINE-SAMPLER</a>
+See <a href="#MACRO-FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3AWITH-SAMPLING" class="xref">WITH-SAMPLING</a></pre></div> </article> </li>  <li> <article class="definition class" id="CLASS ORG.SHIRAKUMO.TRIVIAL-BENCHMARK:SB-TIME"> <header> <span class="visibility">EXTERNAL</span> <span class="type">CLASS</span> <h4 class="name"> <a href="#CLASS%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3ASB-TIME">SB-TIME</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments"></ul>  <a class="source-link" href="https://github.com/shinmera/trivial-benchmark/blob/5f71dbe133dedec78809e9f30f554dfd0cc8a45a/sampler.lisp#L52">Source</a>  </header> <div class="docstring"><i>No documentation provided.</i></div> </article> </li>  <li> <article class="definition class" id="CLASS ORG.SHIRAKUMO.TRIVIAL-BENCHMARK:SYSTEM-INFO"> <header> <span class="visibility">EXTERNAL</span> <span class="type">CLASS</span> <h4 class="name"> <a href="#CLASS%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3ASYSTEM-INFO">SYSTEM-INFO</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments"></ul>  <a class="source-link" href="https://github.com/shinmera/trivial-benchmark/blob/5f71dbe133dedec78809e9f30f554dfd0cc8a45a/sampler.lisp#L52">Source</a>  </header> <div class="docstring"><i>No documentation provided.</i></div> </article> </li>  <li> <article class="definition class" id="CLASS ORG.SHIRAKUMO.TRIVIAL-BENCHMARK:TIMER"> <header> <span class="visibility">EXTERNAL</span> <span class="type">CLASS</span> <h4 class="name"> <a href="#CLASS%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3ATIMER">TIMER</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments"></ul>  <a class="source-link" href="https://github.com/shinmera/trivial-benchmark/blob/5f71dbe133dedec78809e9f30f554dfd0cc8a45a/timer.lisp#L74">Source</a>  </header> <div class="docstring"><pre>Encompasses a set of samples.
+
+A timer can be re-used to sample in individual steps.
+
+See <a href="#FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3AFORMAT-TIMER-STATS" class="xref">FORMAT-TIMER-STATS</a>
+See <a href="#GENERIC-FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3ASAMPLES" class="xref">SAMPLES</a>
+See <a href="#GENERIC-FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3AMETRIC-TYPES" class="xref">METRIC-TYPES</a>
+See <a href="#GENERIC-FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3AREPORT-TO" class="xref">REPORT-TO</a>
+See <a href="#GENERIC-FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3ARESET" class="xref">RESET</a>
+See <a href="#MACRO-FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3AWITH-SAMPLING" class="xref">WITH-SAMPLING</a>
+See <a href="#MACRO-FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3AWITH-TIMING" class="xref">WITH-TIMING</a></pre></div> </article> </li>  <li> <article class="definition function callable" id="FUNCTION ORG.SHIRAKUMO.TRIVIAL-BENCHMARK:ADD-NICKNAME"> <header> <span class="visibility">EXTERNAL</span> <span class="type">FUNCTION</span> <h4 class="name"> <a href="#FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3AADD-NICKNAME">ADD-NICKNAME</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments"></ul>  <a class="source-link" href="https://github.com/shinmera/trivial-benchmark/blob/5f71dbe133dedec78809e9f30f554dfd0cc8a45a/toolkit.lisp#L53">Source</a>  </header> <div class="docstring"><pre>Adds the nikcnames TRIVIAL-BENCHMARK and TB to the package.
+
+This is for convenience.</pre></div> </article> </li>  <li> <article class="definition function callable" id="FUNCTION ORG.SHIRAKUMO.TRIVIAL-BENCHMARK:FORMAT-TIMER-STATS"> <header> <span class="visibility">EXTERNAL</span> <span class="type">FUNCTION</span> <h4 class="name"> <a href="#FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3AFORMAT-TIMER-STATS">FORMAT-TIMER-STATS</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments">  <li class="argument">STREAM</li>    <li class="argument">TIMER</li>    <li class="argument lambda-list-keyword">&amp;REST</li>    <li class="argument">ARGS</li>    <li class="argument lambda-list-keyword">&amp;KEY</li>    <li class="argument">COMPUTATIONS</li>    <li class="argument">METRICS</li>    <li class="argument lambda-list-keyword">&amp;ALLOW-OTHER-KEYS</li>  </ul>  <a class="source-link" href="https://github.com/shinmera/trivial-benchmark/blob/5f71dbe133dedec78809e9f30f554dfd0cc8a45a/timer.lisp#L88">Source</a>  </header> <div class="docstring"><pre>Print a table of the samples contained in the timer.
+
+STREAM should be a stream to print to.
+TIMER should be a TIMER instance.
+COMPUTATIONS should be the derived statistical properties to compute
+METRICS should be the metrics to include. If NIL, uses all metrics the
+timer recorded samples for.
+Other arguments are passed on to PRINT-TABLE
+
+See <a href="#CLASS%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3ATIMER" class="xref">TIMER (type)</a>
+See <a href="#FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3APRINT-TABLE" class="xref">PRINT-TABLE</a>
+See <a href="#VARIABLE%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3A%2ADEFAULT-COMPUTATIONS%2A" class="xref">*DEFAULT-COMPUTATIONS*</a>
+See <a href="#VARIABLE%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3A%2ADEFAULT-METRICS%2A" class="xref">*DEFAULT-METRICS*</a></pre></div> </article> </li>  <li> <article class="definition function callable" id="FUNCTION ORG.SHIRAKUMO.TRIVIAL-BENCHMARK:PRINT-TABLE"> <header> <span class="visibility">EXTERNAL</span> <span class="type">FUNCTION</span> <h4 class="name"> <a href="#FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3APRINT-TABLE">PRINT-TABLE</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments">  <li class="argument">TABLE</li>    <li class="argument lambda-list-keyword">&amp;KEY</li>    <li class="argument">STREAM</li>    <li class="argument">PADDING</li>    <li class="argument">FORMAT</li>  </ul>  <a class="source-link" href="https://github.com/shinmera/trivial-benchmark/blob/5f71dbe133dedec78809e9f30f554dfd0cc8a45a/toolkit.lisp#L3">Source</a>  </header> <div class="docstring"><pre>Print a table of values
+
+TABLE should be a list of lists in row-major order. Each row must have
+the same number of elements.
+
+STREAM is the stream to print the table to.
+
+PADDING is the amount of space to insert to the left and right of
+every cell.
+
+FORMAT is the format to print the table in. Can be one of:
+  :PRINC   --- justs PRINCs the table instead
+  :MINIMAL --- prints the table as small as it can
+  :FANCY   --- prints the table with box drawing glyphs</pre></div> </article> </li>  <li> <article class="definition function callable" id="FUNCTION ORG.SHIRAKUMO.TRIVIAL-BENCHMARK:REPORT"> <header> <span class="visibility">EXTERNAL</span> <span class="type">FUNCTION</span> <h4 class="name"> <a href="#FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3AREPORT">REPORT</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments">  <li class="argument">THING</li>    <li class="argument lambda-list-keyword">&amp;REST</li>    <li class="argument">ARGS</li>    <li class="argument lambda-list-keyword">&amp;KEY</li>    <li class="argument">STREAM</li>    <li class="argument lambda-list-keyword">&amp;ALLOW-OTHER-KEYS</li>  </ul>  <a class="source-link" href="https://github.com/shinmera/trivial-benchmark/blob/5f71dbe133dedec78809e9f30f554dfd0cc8a45a/timer.lisp#L12">Source</a>  </header> <div class="docstring"><pre>Prints a report on the given thing.
+
+This is a wrapper around REPORT-TO.
+
+See <a href="#GENERIC-FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3AREPORT-TO" class="xref">REPORT-TO</a></pre></div> </article> </li>  <li> <article class="definition generic-function callable" id="GENERIC-FUNCTION ORG.SHIRAKUMO.TRIVIAL-BENCHMARK:COMMIT-SAMPLES-FORM"> <header> <span class="visibility">EXTERNAL</span> <span class="type">GENERIC-FUNCTION</span> <h4 class="name"> <a href="#GENERIC-FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3ACOMMIT-SAMPLES-FORM">COMMIT-SAMPLES-FORM</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments">  <li class="argument">SAMPLER</li>    <li class="argument">COMMIT-FN</li>  </ul>  <a class="source-link" href="https://github.com/shinmera/trivial-benchmark/blob/5f71dbe133dedec78809e9f30f554dfd0cc8a45a/sampler.lisp#L8">Source</a>  </header> <div class="docstring"><pre>Emit a form to commit measured samples
+
+Returns a new form.
+The returned form is emitted into a lexical environment where
+COMMIT-FN is bound to a macro with the following behaviour:
+
+  (commit-fn metric sample ...)
+
+  Each pair of METRIC and SAMPLE are recorded in the timer
+  METRIC should be a symbol naming the metric to store the sample
+  under, and SAMPLE should be a REAL number to record. The sample is
+  coerced to a DOUBLE-FLOAT automatically.
+
+See <a href="#MACRO-FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3AWITH-SAMPLING" class="xref">WITH-SAMPLING</a>
+See <a href="#CLASS%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3ASAMPLER" class="xref">SAMPLER (type)</a></pre></div> </article> </li>  <li> <article class="definition generic-function callable" id="GENERIC-FUNCTION ORG.SHIRAKUMO.TRIVIAL-BENCHMARK:COMPUTE"> <header> <span class="visibility">EXTERNAL</span> <span class="type">GENERIC-FUNCTION</span> <h4 class="name"> <a href="#GENERIC-FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3ACOMPUTE">COMPUTE</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments">  <li class="argument">THING</li>    <li class="argument">SAMPLES</li>  </ul>  <a class="source-link" href="https://github.com/shinmera/trivial-benchmark/blob/5f71dbe133dedec78809e9f30f554dfd0cc8a45a/timer.lisp#L6">Source</a>  </header> <div class="docstring"><pre>Compute a derived statistic from a vector of samples.
+
+You may add additional methods to this, though the following
+computation types are provided by default:
+
+  :COUNT
+  :SAMPLES   --- The number of samples
+  :TOTAL     --- The sum of all samples
+  :MINIMUM   --- The smallest sample
+  :MAXIMUM   --- The biggest sample
+  :MEDIAN    --- The median of all samples
+  :AVERAGE   --- The average of all samples
+  :DEVIATION --- The standard deviation based on the average
+
+See <a href="#VARIABLE%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3A%2ADEFAULT-COMPUTATIONS%2A" class="xref">*DEFAULT-COMPUTATIONS*</a></pre></div> </article> </li>  <li> <article class="definition generic-function callable" id="GENERIC-FUNCTION ORG.SHIRAKUMO.TRIVIAL-BENCHMARK:METRIC-TYPES"> <header> <span class="visibility">EXTERNAL</span> <span class="type">GENERIC-FUNCTION</span> <h4 class="name"> <a href="#GENERIC-FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3AMETRIC-TYPES">METRIC-TYPES</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments">  <li class="argument">TIMER</li>  </ul>  <a class="source-link" href="https://github.com/shinmera/trivial-benchmark/blob/5f71dbe133dedec78809e9f30f554dfd0cc8a45a/timer.lisp#L9">Source</a>  </header> <div class="docstring"><pre>Returns a list of metric types included in the timer.
+
+See <a href="#CLASS%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3ATIMER" class="xref">TIMER (type)</a></pre></div> </article> </li>  <li> <article class="definition generic-function callable" id="GENERIC-FUNCTION ORG.SHIRAKUMO.TRIVIAL-BENCHMARK:REPORT-TO"> <header> <span class="visibility">EXTERNAL</span> <span class="type">GENERIC-FUNCTION</span> <h4 class="name"> <a href="#GENERIC-FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3AREPORT-TO">REPORT-TO</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments">  <li class="argument">STREAM</li>    <li class="argument">THING</li>    <li class="argument lambda-list-keyword">&amp;KEY</li>    <li class="argument">COMPUTATIONS</li>    <li class="argument lambda-list-keyword">&amp;ALLOW-OTHER-KEYS</li>  </ul>  <a class="source-link" href="https://github.com/shinmera/trivial-benchmark/blob/5f71dbe133dedec78809e9f30f554dfd0cc8a45a/timer.lisp#L7">Source</a>  </header> <div class="docstring"><pre>Print a report about THING to STREAM.
+
+STREAM may be a stream, T, or NIL, according to FORMAT's output
+designators.
+
+COMPUTATIONS may be a list of statistical properties to report on a
+vector of samples.
+
+Additional arguments are passed on to PRINT-TABLE
+
+See <a href="#CLASS%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3ATIMER" class="xref">TIMER (type)</a>
+See <a href="#FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3AFORMAT-TIMER-STATS" class="xref">FORMAT-TIMER-STATS</a>
+See <a href="#FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3APRINT-TABLE" class="xref">PRINT-TABLE</a></pre></div> </article> </li>  <li> <article class="definition generic-function callable" id="GENERIC-FUNCTION ORG.SHIRAKUMO.TRIVIAL-BENCHMARK:RESET"> <header> <span class="visibility">EXTERNAL</span> <span class="type">GENERIC-FUNCTION</span> <h4 class="name"> <a href="#GENERIC-FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3ARESET">RESET</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments">  <li class="argument">TIMER</li>  </ul>  <a class="source-link" href="https://github.com/shinmera/trivial-benchmark/blob/5f71dbe133dedec78809e9f30f554dfd0cc8a45a/timer.lisp#L10">Source</a>  </header> <div class="docstring"><pre>Resets the timer and clears all samples.
+
+See <a href="#CLASS%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3ATIMER" class="xref">TIMER (type)</a></pre></div> </article> </li>  <li> <article class="definition generic-function callable" id="GENERIC-FUNCTION ORG.SHIRAKUMO.TRIVIAL-BENCHMARK:SAMPLES"> <header> <span class="visibility">EXTERNAL</span> <span class="type">GENERIC-FUNCTION</span> <h4 class="name"> <a href="#GENERIC-FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3ASAMPLES">SAMPLES</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments">  <li class="argument">TIMER</li>    <li class="argument">METRIC</li>  </ul>  <a class="source-link" href="https://github.com/shinmera/trivial-benchmark/blob/5f71dbe133dedec78809e9f30f554dfd0cc8a45a/timer.lisp#L8">Source</a>  </header> <div class="docstring"><pre>Accesses a sample vector for the given metric.
+
+The returned vector is adjustable and has a fill-pointer.
+If no vector for the given metric existed before, it is created for
+you.
+
+See <a href="#CLASS%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3ATIMER" class="xref">TIMER (type)</a></pre></div> </article> </li>  <li> <article class="definition generic-function callable" id="GENERIC-FUNCTION ORG.SHIRAKUMO.TRIVIAL-BENCHMARK:VARIABLES"> <header> <span class="visibility">EXTERNAL</span> <span class="type">GENERIC-FUNCTION</span> <h4 class="name"> <a href="#GENERIC-FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3AVARIABLES">VARIABLES</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments">  <li class="argument">SAMPLER</li>  </ul>  <a class="source-link" href="https://github.com/shinmera/trivial-benchmark/blob/5f71dbe133dedec78809e9f30f554dfd0cc8a45a/sampler.lisp#L6">Source</a>  </header> <div class="docstring"><pre>Return a list of variable specs the sampler needs.
+
+Each variable spec should be a list of the following elements:
+  SYMBOL  --- The symbol the variable is bound to
+  DEFAULT --- The default value the variable is initialised to
+  TYPE    --- The type to declare the variable as
+
+See <a href="#MACRO-FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3AWITH-SAMPLING" class="xref">WITH-SAMPLING</a>
+See <a href="#CLASS%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3ASAMPLER" class="xref">SAMPLER (type)</a></pre></div> </article> </li>  <li> <article class="definition generic-function callable" id="GENERIC-FUNCTION ORG.SHIRAKUMO.TRIVIAL-BENCHMARK:WRAP-MEASUREMENT-FORM"> <header> <span class="visibility">EXTERNAL</span> <span class="type">GENERIC-FUNCTION</span> <h4 class="name"> <a href="#GENERIC-FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3AWRAP-MEASUREMENT-FORM">WRAP-MEASUREMENT-FORM</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments">  <li class="argument">SAMPLER</li>    <li class="argument">FORM</li>  </ul>  <a class="source-link" href="https://github.com/shinmera/trivial-benchmark/blob/5f71dbe133dedec78809e9f30f554dfd0cc8a45a/sampler.lisp#L7">Source</a>  </header> <div class="docstring"><pre>Wrap FORM in a form to record sampling data.
+
+Returns the new form.
+The returned form is emitted into a lexical environment where
+variables according to the SAMPLER's VARIBALES specs are bound.
+
+See <a href="#MACRO-FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3AWITH-SAMPLING" class="xref">WITH-SAMPLING</a>
+See <a href="#CLASS%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3ASAMPLER" class="xref">SAMPLER (type)</a></pre></div> </article> </li>  <li> <article class="definition macro callable" id="MACRO-FUNCTION ORG.SHIRAKUMO.TRIVIAL-BENCHMARK:DEFINE-DELTA-SAMPLER"> <header> <span class="visibility">EXTERNAL</span> <span class="type">MACRO</span> <h4 class="name"> <a href="#MACRO-FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3ADEFINE-DELTA-SAMPLER">DEFINE-DELTA-SAMPLER</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments">  <li class="argument">NAME</li>    <li class="argument lambda-list-keyword">&amp;BODY</li>    <li class="argument">SAMPLE-POINT-FORMS</li>  </ul>  <a class="source-link" href="https://github.com/shinmera/trivial-benchmark/blob/5f71dbe133dedec78809e9f30f554dfd0cc8a45a/sampler.lisp#L33">Source</a>  </header> <div class="docstring"><pre>Convenience macro to define a sampler type with a single delta metric.
+
+NAME can either be the name of the sampler, or a list of the name and
+a normalisation factor by which the delta is divided to convert it to
+a proper sample point.
+
+SAMPLE-POINT-FORMS should be one or more forms whose ultimate return
+value evaluates to some REAL number. The forms are emitted *twice*,
+the first time before the execution to be measured, and the second
+time after. The sample is computed based on the difference of the two
+return values.
+
+See <a href="#MACRO-FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3ADEFINE-SAMPLER" class="xref">DEFINE-SAMPLER</a>
+See <a href="#CLASS%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3ASAMPLER" class="xref">SAMPLER (type)</a></pre></div> </article> </li>  <li> <article class="definition macro callable" id="MACRO-FUNCTION ORG.SHIRAKUMO.TRIVIAL-BENCHMARK:DEFINE-SAMPLER"> <header> <span class="visibility">EXTERNAL</span> <span class="type">MACRO</span> <h4 class="name"> <a href="#MACRO-FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3ADEFINE-SAMPLER">DEFINE-SAMPLER</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments">  <li class="argument">NAME</li>    <li class="argument">VARS</li>    <li class="argument lambda-list-keyword">&amp;BODY</li>    <li class="argument">FORMS</li>  </ul>  <a class="source-link" href="https://github.com/shinmera/trivial-benchmark/blob/5f71dbe133dedec78809e9f30f554dfd0cc8a45a/sampler.lisp#L14">Source</a>  </header> <div class="docstring"><pre>Convenience macro to define a new sampler type.
+
+NAME should be the name of the new sampler class.
+VARS should be a list of variable specs that the sampler will use to
+store data during a sampling step. Each spec can be either a symbol
+naming the variable, or a variable spec list.
+FORMS should match the following structures:
+
+  (:MEASURE (FORM-VAR) BODY...)
+  (:COMMIT (COMMIT-FN-VAR) BODY...)
+
+Which are converted to methods for WRAP-MEASUREMENT-FORM and
+COMMIT-SAMPLES-FORM respectively. Every variable in VARS is bound
+during the body of either, so that you can conveniently emit it into
+the resulting forms.
+
+See <a href="#GENERIC-FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3AVARIABLES" class="xref">VARIABLES</a>
+See <a href="#GENERIC-FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3AWRAP-MEASUREMENT-FORM" class="xref">WRAP-MEASUREMENT-FORM</a>
+See <a href="#GENERIC-FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3ACOMMIT-SAMPLES-FORM" class="xref">COMMIT-SAMPLES-FORM</a>
+See <a href="#CLASS%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3ASAMPLER" class="xref">SAMPLER (type)</a>
+See <a href="#MACRO-FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3ADEFINE-DELTA-SAMPLER" class="xref">DEFINE-DELTA-SAMPLER</a></pre></div> </article> </li>  <li> <article class="definition macro callable" id="MACRO-FUNCTION ORG.SHIRAKUMO.TRIVIAL-BENCHMARK:WITH-SAMPLING"> <header> <span class="visibility">EXTERNAL</span> <span class="type">MACRO</span> <h4 class="name"> <a href="#MACRO-FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3AWITH-SAMPLING">WITH-SAMPLING</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments">  <ul class="arguments"> <li class="argument">TIMER-FORM</li>  <li class="argument lambda-list-keyword">&amp;REST</li>  <li class="argument">SAMPLERS</li> </ul>    <li class="argument lambda-list-keyword">&amp;BODY</li>    <li class="argument">FORMS</li>  </ul>  <a class="source-link" href="https://github.com/shinmera/trivial-benchmark/blob/5f71dbe133dedec78809e9f30f554dfd0cc8a45a/timer.lisp#L130">Source</a>  </header> <div class="docstring"><pre>Records sampling information about FORMS into a timer.
+
+TIMER-FORM should evaluate to a TIMER instance, into which the
+sampling data will be committed.
+
+SAMPLERS should be a list of names of SAMPLER types that will measure
+the FORMS. If none are given, *DEFAULT-SAMPLERS* are used.
+
+The values of FORMS are returned.
+
+During expansion of this macro each sampler in SAMPLERS is
+instantiated and variable bindings according to their VARIABLES specs
+are emitted. Then, the FORMS are wrapped according to each sampler's
+WRAP-MEASUREMENT-FORM return value. The order here can matter, and the
+first sampler specified will be the &quot;innermost&quot; wrapper. Finally,
+each sampler's COMMIT-SAMPLES-FORM is emitted in order to record the
+sampling data into the timer.
+
+See <a href="#VARIABLE%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3A%2ADEFAULT-SAMPLERS%2A" class="xref">*DEFAULT-SAMPLERS*</a>
+See <a href="#CLASS%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3ASAMPLER" class="xref">SAMPLER (type)</a>
+See <a href="#CLASS%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3ATIMER" class="xref">TIMER (type)</a>
+See <a href="#GENERIC-FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3AVARIABLES" class="xref">VARIABLES</a>
+See <a href="#GENERIC-FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3AWRAP-MEASUREMENT-FORM" class="xref">WRAP-MEASUREMENT-FORM</a>
+See <a href="#GENERIC-FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3ACOMMIT-SAMPLES-FORM" class="xref">COMMIT-SAMPLES-FORM</a></pre></div> </article> </li>  <li> <article class="definition macro callable" id="MACRO-FUNCTION ORG.SHIRAKUMO.TRIVIAL-BENCHMARK:WITH-TIMING"> <header> <span class="visibility">EXTERNAL</span> <span class="type">MACRO</span> <h4 class="name"> <a href="#MACRO-FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3AWITH-TIMING">WITH-TIMING</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments">  <ul class="arguments"> <li class="argument">N</li>  <li class="argument lambda-list-keyword">&amp;REST</li>  <li class="argument">REPORT-ARGS</li>  <li class="argument lambda-list-keyword">&amp;KEY</li>  <li class="argument">TIMER</li>  <li class="argument">SAMPLERS</li> </ul>    <li class="argument lambda-list-keyword">&amp;BODY</li>    <li class="argument">FORMS</li>  </ul>  <a class="source-link" href="https://github.com/shinmera/trivial-benchmark/blob/5f71dbe133dedec78809e9f30f554dfd0cc8a45a/timer.lisp#L153">Source</a>  </header> <div class="docstring"><pre>Convenience macro to do a one-off timing.
+
+Creates a timer instance according to TIMER, runs WITH-SAMPLING N
+times, and then REPORTs the timer using the additional REPORT-ARGS.
+
+See <a href="#CLASS%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3ATIMER" class="xref">TIMER (type)</a>
+See <a href="#MACRO-FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3AWITH-SAMPLING" class="xref">WITH-SAMPLING</a>
+See <a href="#FUNCTION%20ORG.SHIRAKUMO.TRIVIAL-BENCHMARK%3AREPORT" class="xref">REPORT</a></pre></div> </article> </li> </ul> </article> </li> </ul> </section>  </article> <script>window.addEventListener("DOMContentLoaded", function(){
+    var unmarkElement = function(el){
+        if(el.tagName === "mark" || el.tagName === "MARK"){
+            [].forEach.call(el.childNodes, function(child){
+                el.parentNode.insertBefore(child, el);
+            });
+            el.parentNode.removeChild(el);
+        }else if(el.parentNode.tagName === "mark"){
+            return unmarkElement(el.parentNode);
+        }
+        return null;
+    }
+
+    var unmarkAll = function(root){
+        root = root || document;
+        [].forEach.call(root.querySelectorAll("mark"), unmarkElement);
+    }
+    
+    var markElement = function(el){
+        if(el.parentNode.tagName === "mark" || el.parentNode.tagName === "MARK"){
+            return el.parentNode;
+        } else {
+            unmarkAll();
+            var marked = document.createElement("mark");
+            el.parentNode.insertBefore(marked, el);
+            marked.appendChild(el);
+            return marked;
+        }
+    }
+
+    var markFragmented = function(){
+        if(window.location.hash){
+            var el = document.getElementById(decodeURIComponent(window.location.hash.substr(1)));
+            if(el) markElement(el);
+        }
+    }
+
+    var registerXrefLink = function(link){
+        var el = document.getElementById(decodeURIComponent(link.getAttribute("href").substr(1)));
+        if(el){
+            link.addEventListener("click", function(){
+                markElement(el);
+            });
+        }
+    }
+
+    var registerXrefLinks = function(root){
+        root = root || document;
+        [].forEach.call(root.querySelectorAll("a.xref"), registerXrefLink);
+    }
+
+    markFragmented();
+    registerXrefLinks();
+}); </script> </body> </html> 
