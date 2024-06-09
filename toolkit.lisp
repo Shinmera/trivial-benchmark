@@ -13,10 +13,12 @@
   (let ((n (expt 10 n)))
     (/ (round (* num n)) n)))
 
-(defun type= (a b)
-  "Returns T if A and B denote the same type (are subtypes of one another)
-If one of the arguments does not denote a type, the result of TYPE-OF is used in their place."
-  (unless (or (listp a) (symbolp a)) (setf a (type-of a)))
-  (unless (or (listp b) (symbolp b)) (setf b (type-of b)))
-  (and (subtypep a b)
-       (subtypep b a)))
+(defun enlist (thing &rest args)
+  (if (listp thing)
+      thing
+      (list* thing args)))
+
+(defun unlist (thing)
+  (if (listp thing)
+      (first thing)
+      thing))
