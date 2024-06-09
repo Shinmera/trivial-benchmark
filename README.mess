@@ -6,21 +6,25 @@ We assume that there's a local or global nickname for ``org.shirakumo.trivial-be
 
 For basic throwaway benchmarking, the ``with-timing`` macro should suffice:
 
-    (tb:with-timing (1000)
-      (+ 1 1))
+:: common lisp
+(tb:with-timing (1000)
+  (+ 1 1))
+::
 
-However, you can also do more complex timing using `make-timer` and `with-sampling`. The former creates a new timer object (with an optional list of metrics to sample) and the latter collects one sample for each metric of the timer for the duration of the body forms.
+However, you can also do more complex timing using your own ``timer`` and ``with-sampling``. The former creates a new timer object (with an optional list of metrics to sample) and the latter collects one sample for each metric of the timer for the duration of the body forms.
 
-    (defvar *timer* (tb:make-timer))
-    
-    (tb:with-sampling (*timer*)
-      (+ 1 1))
-    
-    (tb:with-sampling (*timer*)
-      (expt 10 100))
-    
-    (tb:report *timer*)
-    
-    (tb:reset *timer*)
-    
-    (tb:report *timer*)
+:: common lisp
+(defvar *timer* (make-instance 'tb:timer))
+
+(tb:with-sampling (*timer*)
+  (+ 1 1))
+
+(tb:with-sampling (*timer*)
+  (expt 10 100))
+
+(tb:report *timer*)
+
+(tb:reset *timer*)
+
+(tb:report *timer*)
+::
