@@ -13,4 +13,5 @@
   :components ((:file "package")
                (:file "toolkit")
                (:file "sampler")
-               (:file "timer")))
+               (:file "timer")
+               (:file "documentation")))

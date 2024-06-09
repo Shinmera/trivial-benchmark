@@ -1,6 +1,6 @@
 (in-package #:org.shirakumo.trivial-benchmark)
 
-(defun print-table (table &key (stream T) (padding 1) (format :minimal))
+(defun print-table (table &key (stream T) (padding 1) (format :fancy))
   (let* ((columns (length (first table)))
          (widths (append (loop for i from 0 below columns
                                collect (loop for row in table

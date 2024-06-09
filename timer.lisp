@@ -150,19 +150,15 @@
            ,@(loop for sampler in samplers
                    collect (commit-samples-form sampler commit-fn)))))))
 
-(defmacro with-timing ((n &key ((:timer timer-form) '(make-instance 'timer))
-                               (stream T)
-                               (samplers *default-samplers*)
-                               (metrics '*default-metrics*)
-                               (computations '*default-computations*)
-                               (format :fancy))
+(defmacro with-timing ((n &rest report-args
+                        &key ((:timer timer-form) '(make-instance 'timer))
+                             (samplers *default-samplers*))
                        &body forms)
+  (remf report-args :samplers)
+  (remf report-args :timer)
   (let ((timer (gensym "TIMER")))
     `(let ((,timer ,timer-form))
        (loop repeat ,n
              do (with-sampling (,timer ,@samplers)
                   ,@forms))
-       (report ,timer :stream ,stream
-                      :metrics ,metrics
-                      :computations ,computations
-                      :format ,format))))
+       (report ,timer ,@report-args))))
