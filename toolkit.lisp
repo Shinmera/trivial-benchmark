@@ -1,7 +1,6 @@
 (in-package #:org.shirakumo.trivial-benchmark)
 
 (defun print-table (table &key (stream T) (padding 2))
-  "Prints a table (each list in TABLE being a row) with proper spacing."
   (let ((widths (apply #'map 'list #'max (loop for row in table
                                                collect (loop for field in row
                                                              collect (+ padding (length (princ-to-string field))))))))
@@ -9,7 +8,6 @@
       (apply #'format stream (format NIL "~~&~{~~~da~}~~%" widths) row))))
 
 (defun round-to (num n)
-  "Rounds NUM to N digits after the dot."
   (let ((n (expt 10 n)))
     (/ (round (* num n)) n)))
 

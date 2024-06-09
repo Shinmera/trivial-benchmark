@@ -1,6 +1,7 @@
 (in-package #:org.shirakumo.trivial-benchmark)
 
 (defvar *default-computations* '(:samples :total :minimum :maximum :median :average :deviation))
+(defvar *default-metrics* ())
 
 (defgeneric compute (thing samples))
 (defgeneric report-to (stream thing &key))
@@ -8,8 +9,9 @@
 (defgeneric metric-types (timer))
 (defgeneric reset (timer))
 
-(defun report (thing &key (stream T) (computations *default-computations*))
-  (report-to stream thing :computations computations))
+(defun report (thing &rest args &key (stream T) &allow-other-keys)
+  (remf args :stream)
+  (apply #'report-to stream thing args))
 
 (defmethod compute ((x (eql :count)) (samples vector))
   (length samples))
@@ -75,9 +77,6 @@
   (print-unreadable-object (timer stream :type T)
     (format stream "~{~a~^ ~}" (metric-types timer))))
 
-(defmethod shared-initialize :after ((timer timer) slots &key )
-  )
-
 (defmethod samples ((timer timer) metric)
   (or (gethash metric (metrics timer))
       (setf (gethash metric (metrics timer)) (make-array 1024 :adjustable T :fill-pointer 0))))
@@ -85,10 +84,14 @@
 (defmethod metric-types ((timer timer))
   (loop for key being the hash-keys of (metrics timer) collect key))
 
-(defun format-timer-stats (stream timer &optional (computations *default-computations*))
+(defun format-timer-stats (stream timer &key (computations *default-computations*)
+                                             (metrics *default-metrics*))
   (print-table
    (cons (cons :- computations)
-         (loop for metric being the hash-keys of (metrics timer) using (hash-value samples)
+         (loop for metric in (or metrics
+                                 (loop for k being the hash-keys of (metrics timer) collect k))
+               for samples = (samples timer metric)
+               when (< 0 (length samples))
                collect (list* metric
                               (mapcar (lambda (a)
                                         (typecase a
@@ -108,10 +111,10 @@
     (format stream "~&~%The statistics for the timer are:~&")
     (report timer :stream stream)))
 
-(defmethod report-to ((stream stream) (timer timer) &key computations)
+(defmethod report-to ((stream stream) (timer timer) &rest args &key &allow-other-keys)
   (if (loop for samples being the hash-values of (metrics timer)
             thereis (< 0 (length samples)))
-      (format-timer-stats stream timer computations)
+      (apply #'format-timer-stats stream timer args)
       (format stream "No metric has any samples yet."))
   timer)
 
@@ -143,10 +146,17 @@
            ,@(loop for sampler in samplers
                    collect (commit-samples-form sampler commit-fn)))))))
 
-(defmacro with-timing ((n &optional (timer-form '(make-instance 'timer)) (stream T) (computations '*default-computations*)) &body forms)
+(defmacro with-timing ((n &key ((:timer timer-form) '(make-instance 'timer))
+                               (stream T)
+                               (samplers *default-samplers*)
+                               (metrics '*default-metrics*)
+                               (computations '*default-computations*))
+                       &body forms)
   (let ((timer (gensym "TIMER")))
     `(let ((,timer ,timer-form))
        (loop repeat ,n
-             do (with-sampling (,timer)
+             do (with-sampling (,timer ,@samplers)
                   ,@forms))
-       (report ,timer :stream ,stream :computations ,computations))))
+       (report ,timer :stream ,stream
+                      :metrics ,metrics
+                      :computations ,computations))))

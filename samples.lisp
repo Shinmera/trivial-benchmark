@@ -79,7 +79,7 @@
                       (multiple-value-prog1 ,form
                         (multiple-value-setq (,h1 ,l1) (sb-impl::read-cycle-counter)))))
     (:commit (commit-fn)
-             `(,commit-fn cpu-cycles (sb-impl::elapsed-cycles ,h0 ,l0 ,h1 ,l1))))
+             `(,commit-fn processor-cycles (sb-impl::elapsed-cycles ,h0 ,l0 ,h1 ,l1))))
 
   (define-sampler sb-time (user-run-time-us
                            system-run-time-us
@@ -121,3 +121,11 @@
 (progn
   (define-delta-sampler (bytes-consed)
     (ffi:c-inline () () :object "ecl_make_unsigned_integer(GC_get_total_bytes())" :one-liner t)))
+
+
+#+sbcl
+(setf *default-samplers* '(sb-time))
+#+ecl
+(setf *default-samplers* '(real-time run-time bytes-consed))
+#-(or ecl sbcl)
+(setf *default-samplers* '(real-time run-time))
