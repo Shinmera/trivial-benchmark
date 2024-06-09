@@ -63,12 +63,13 @@
   (with-output-to-string (stream)
     (apply #'report-to stream thing args)))
 
-(defmethod report-to ((stream stream) (samples vector) &key computations (padding 2))
-  (print-table
-   (cons (list :computation :value)
-         (loop for comp in computations
-               collect (list comp (compute comp samples))))
-   :stream stream :padding padding))
+(defmethod report-to ((stream stream) (samples vector) &rest args &key computations &allow-other-keys)
+  (remf args :computations)
+  (apply #'print-table
+         (cons (list :computation :value)
+               (loop for comp in computations
+                     collect (list comp (compute comp samples))))
+         :stream stream args))
 
 (defclass timer ()
   ((metrics :initform (make-hash-table :test 'eql) :accessor metrics)))
@@ -84,22 +85,25 @@
 (defmethod metric-types ((timer timer))
   (loop for key being the hash-keys of (metrics timer) collect key))
 
-(defun format-timer-stats (stream timer &key (computations *default-computations*)
-                                             (metrics *default-metrics*))
-  (print-table
-   (cons (cons :- computations)
-         (loop for metric in (or metrics
-                                 (loop for k being the hash-keys of (metrics timer) collect k))
-               for samples = (samples timer metric)
-               when (< 0 (length samples))
-               collect (list* metric
-                              (mapcar (lambda (a)
-                                        (typecase a
-                                          (symbol (format NIL "~a" a))
-                                          (fixnum (format NIL "~d" a))
-                                          (T (format NIL "~f" (round-to a 6)))))
-                                      (compute computations samples)))))
-   :stream stream))
+(defun format-timer-stats (stream timer &rest args
+                           &key (computations *default-computations*)
+                                (metrics *default-metrics*)
+                           &allow-other-keys)
+  (remf args :computations)
+  (remf args :metrics)
+  (apply #'print-table
+         (cons (cons :- computations)
+               (loop for metric in (or metrics
+                                       (loop for k being the hash-keys of (metrics timer) collect k))
+                     for samples = (samples timer metric)
+                     when (< 0 (length samples))
+                     collect (list* metric
+                                    (mapcar (lambda (a)
+                                              (typecase a
+                                                (float (round-to a 6))
+                                                (T a)))
+                                            (compute computations samples)))))
+         :stream stream args))
 
 (defmethod describe-object ((timer timer) stream)
   (let ((*print-pretty* T))
@@ -150,7 +154,8 @@
                                (stream T)
                                (samplers *default-samplers*)
                                (metrics '*default-metrics*)
-                               (computations '*default-computations*))
+                               (computations '*default-computations*)
+                               (format :fancy))
                        &body forms)
   (let ((timer (gensym "TIMER")))
     `(let ((,timer ,timer-form))
@@ -159,4 +164,5 @@
                   ,@forms))
        (report ,timer :stream ,stream
                       :metrics ,metrics
-                      :computations ,computations))))
+                      :computations ,computations
+                      :format ,format))))
