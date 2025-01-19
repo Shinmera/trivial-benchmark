@@ -156,6 +156,11 @@
                        &body forms)
   (remf report-args :samplers)
   (remf report-args :timer)
+
+  (when (symbolp samplers)
+    (setf samplers
+          (eval samplers)))
+  
   (let ((timer (gensym "TIMER")))
     `(let ((,timer ,timer-form))
        (loop repeat ,n
