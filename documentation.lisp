@@ -249,6 +249,9 @@ See COMMIT-SAMPLES-FORM")
 Creates a timer instance according to TIMER, runs WITH-SAMPLING N
 times, and then REPORTs the timer using the additional REPORT-ARGS.
 
+SAMPLERS argument is evaluated during compile time and can be a list
+or a name of a global variable holding a list of symbols.
+
 See TIMER (type)
 See WITH-SAMPLING
 See REPORT"))
