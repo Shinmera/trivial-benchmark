@@ -37,7 +37,7 @@
 
 (defun round-to (num n)
   (let ((n (expt 10 n)))
-    (/ (round (* num n)) n)))
+    (/ (fround (* num n)) n)))
 
 (defun enlist (thing &rest args)
   (if (listp thing)
