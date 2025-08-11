@@ -5,9 +5,9 @@
   :author "Yukari Hafner <shinmera@tymoon.eu>"
   :maintainer "Yukari Hafner <shinmera@tymoon.eu>"
   :description "An easy to use benchmarking system."
-  :homepage "https://shinmera.github.io/trivial-benchmark/"
-  :bug-tracker "https://github.com/Shinmera/trivial-benchmark/issues"
-  :source-control (:git "https://github.com/Shinmera/trivial-benchmark.git")
+  :homepage "https://shinmera.com/docs/trivial-benchmark/"
+  :bug-tracker "https://shinmera.com/project/trivial-benchmark/issues"
+  :source-control (:git "https://shinmera.com/project/trivial-benchmark.git")
   :depends-on (:documentation-utils)
   :serial T
   :components ((:file "package")
